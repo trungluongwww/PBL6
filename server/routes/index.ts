@@ -4,6 +4,10 @@ import { expressjwt, Request } from "express-jwt";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import order from "./order";
+import common from "./common";
+
+import response from "../../ultilities/response";
 
 export default (app: Express) => {
   app.use(helmet());
@@ -28,8 +32,9 @@ export default (app: Express) => {
   //     }
   //     next()
   //   })
-  app.get("/", (req: Request, res: Response, next: NextFunction) => {
-    console.log(12345);
-    res.status(200).json("232323");
+  common(app);
+  order(app);
+  app.use("*", (req: Request, res: Response) => {
+    return response.r404(res, "The route not found");
   });
 };
