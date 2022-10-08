@@ -1,21 +1,51 @@
 import {
-  ICalculateFeePayload,
-  IServicePayload,
-} from "../../interfaces/delivery/request";
-import {
-  ICalculateFeeResponse,
-  ICalculateFeeData,
-  IServiceResponse,
-  IServiceData,
-} from "../../interfaces/delivery/response";
+  IDeliveryPreviewFeePayload,
+  IGHNServicePayload,
+  IGHNFeePayload,
+  IGHNPreviewFeeData,
+  IGHNServiceResponse,
+  IGHNServiceData,
+  IGHNPreviewFeeResponse,
+} from "../../interfaces/delivery";
+import {} from "../../interfaces/delivery/response";
 import fetch from "node-fetch";
 import delivery from "./index";
 import constants from "../../constants";
+import services from "../../server/services";
+import { IOrderInfo } from "../../interfaces/order";
 
 const calculateFee = async (
-  payload: ICalculateFeePayload
-): Promise<[ICalculateFeeData | null, Error | null]> => {
+  payload: IDeliveryPreviewFeePayload,
+  orderInfo: IOrderInfo | null
+): Promise<[IGHNPreviewFeeData | null, Error | null]> => {
   const deliveryCfg = delivery.getDeliveryConfig();
+  let err;
+  if (!orderInfo) {
+    [orderInfo, err] = await services.product.calculator.infoOrder(
+      payload.items
+    );
+    if (err) {
+      return [null, err];
+    }
+  }
+  console.log(orderInfo);
+  const GHNPayload = {
+    from_district_id: payload.from_district_id,
+    service_id: payload.service_id,
+    to_district_id: payload.to_district_id,
+    to_ward_code: payload.to_ward_code,
+    height: orderInfo?.height || 0,
+    weight: orderInfo?.weight || 0,
+    length: orderInfo?.length || 0,
+    width: orderInfo?.width || 0,
+    insurance_value: orderInfo?.insurance_value,
+  } as IGHNFeePayload;
+  console.log({
+    ...GHNPayload,
+    service_type_id: null,
+    coupon: null,
+  });
+  console.log(deliveryCfg);
   const result = await fetch(
     deliveryCfg.shippingOrderURL + constants.delivery.calCulateFee,
     {
@@ -24,10 +54,15 @@ const calculateFee = async (
         Token: "eecc4477-3722-11ed-ad26-3a4226f77ff0",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...payload, service_type_id: null, coupon: null }),
+      body: JSON.stringify({
+        ...GHNPayload,
+        service_type_id: null,
+        coupon: null,
+      }),
     }
   );
-  const response = (await result.json()) as ICalculateFeeResponse;
+
+  const response = (await result.json()) as IGHNPreviewFeeResponse;
   if (String(response.code).startsWith("4")) {
     const err = new Error(response.message);
     return [null, err];
@@ -37,8 +72,8 @@ const calculateFee = async (
 };
 
 const getServices = async (
-  payload: IServicePayload
-): Promise<[Array<IServiceData> | null, Error | null]> => {
+  payload: IGHNServicePayload
+): Promise<[Array<IGHNServiceData> | null, Error | null]> => {
   const deliveryCfg = delivery.getDeliveryConfig();
   const result = await fetch(
     deliveryCfg.shippingOrderURL + constants.delivery.service,
@@ -51,7 +86,7 @@ const getServices = async (
       body: JSON.stringify({ ...payload, shop_id: deliveryCfg.shopID }),
     }
   );
-  const response = (await result.json()) as IServiceResponse;
+  const response = (await result.json()) as IGHNServiceResponse;
   if (String(response.code).startsWith("4")) {
     const err = new Error(response.message);
     return [null, err];

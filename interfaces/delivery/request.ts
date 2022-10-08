@@ -1,4 +1,14 @@
-interface ICalculateFeePayload {
+import { IOrderItemPayload } from "../order";
+
+interface IDeliveryPreviewFeePayload {
+  from_district_id: number;
+  service_id: number;
+  to_district_id: number;
+  to_ward_code: string;
+  items: Array<IOrderItemPayload>;
+}
+
+interface IGHNFeePayload {
   from_district_id: number;
   service_id: number;
   to_district_id: number;
@@ -10,9 +20,9 @@ interface ICalculateFeePayload {
   insurance_value: number;
 }
 
-interface IServicePayload {
-  from_district: 1447;
-  to_district: 1442;
+interface IGHNServicePayload {
+  from_district: number;
+  to_district: number;
 }
 
-export { ICalculateFeePayload, IServicePayload };
+export { IDeliveryPreviewFeePayload, IGHNServicePayload, IGHNFeePayload };

@@ -1,7 +1,6 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
+import { Column, Entity } from "typeorm";
 import constants from "../../../constants";
 import BaseEntity from "./base";
-import { v4 as uuid } from "uuid";
 
 @Entity("accounts")
 export default class Account extends BaseEntity {
@@ -33,4 +32,32 @@ export default class Account extends BaseEntity {
     name: "phone",
   })
   phone: string;
+
+  @Column({
+    type: "int",
+    nullable: true,
+    name: "district_id",
+  })
+  districtId: number;
+
+  @Column({
+    type: "int",
+    name: "province_id",
+    nullable: true,
+  })
+  provinceId: number;
+
+  @Column({
+    type: "varchar",
+    name: "ward_code",
+    nullable: true,
+  })
+  wardCode: string;
+
+  @Column({
+    name: "address",
+    type: "text",
+    nullable: true,
+  })
+  address: string;
 }

@@ -1,14 +1,14 @@
-const main = async () => {
-  var x = 0;
-
-  switch (x) {
-    case 10:
-      console.log(10);
-    case 20:
-      console.log(20);
-    default:
-      console.log("default");
+function main() {
+  const a = {
+    a: 123,
+    b: 0,
+  };
+  console.log(a);
+  {
+    if (1) {
+      a.b = 123;
+    }
   }
-  console.log("pass switch");
-};
-main().then();
+  console.log(a);
+}
+main();

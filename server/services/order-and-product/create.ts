@@ -35,11 +35,12 @@ const many = async (
   orderId: string,
   orderItems: Array<IOrderItemPayload>
 ): Promise<Error | null> => {
+  console.log(orderItems);
   const oaps = orderItems.map((item) => {
     const order = new Order();
     order.id = orderId;
     const product = new Product();
-    product.id = item.productId;
+    product.id = item.product_id;
 
     const oap = new OrderAndProduct();
     oap.order = order;

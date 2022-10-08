@@ -55,6 +55,13 @@ export default class Product extends BaseEntity {
   avatar: string;
 
   @Column({
+    name: "quantity",
+    type: "int",
+    default: 0,
+  })
+  quantity: number;
+
+  @Column({
     type: "decimal",
     name: "discount",
     default: 0,

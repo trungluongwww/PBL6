@@ -1,7 +1,6 @@
 import fetch from "node-fetch";
 import constants from "../../constants";
 import delivery from "./index";
-import { IServiceResponse } from "../../interfaces/delivery";
 
 const getProvinces = async (): Promise<[any | null, Error | null]> => {
   const deliveryCfg = delivery.getDeliveryConfig();

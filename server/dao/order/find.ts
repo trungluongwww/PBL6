@@ -2,7 +2,7 @@ import { Order } from "../../../modules/database/entities";
 import database from "../../../modules/database";
 
 const byId = async (id: string): Promise<[Order | null, Error | null]> => {
-  const db = await database.getDataSource();
+  const db = database.getDataSource();
 
   try {
     const q = await db.createQueryBuilder(Order, "o");

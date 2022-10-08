@@ -32,10 +32,10 @@ export default class Voucher extends BaseEntity {
 
   @Column({
     type: "decimal",
-    name: "max_value",
+    name: "discount_value",
     default: 0,
   })
-  maxValue: number;
+  discountValue: number;
 
   @Column({
     name: "quantity",
@@ -45,12 +45,12 @@ export default class Voucher extends BaseEntity {
 
   @Column({
     type: "boolean",
-    name: "active",
+    name: "is_active",
   })
   isActive: boolean;
 
   @Column({
-    name: "delete",
+    name: "is_delete",
     type: "boolean",
     default: false,
   })

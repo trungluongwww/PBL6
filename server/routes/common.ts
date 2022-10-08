@@ -8,5 +8,6 @@ export default (e: Express) => {
   r.get("/provinces", common.masterData.getProvinces);
   r.get("/wards/:id", common.masterData.getWards);
   r.get("/districts/:id", common.masterData.getDistricts);
-  r.post('/services',common.shippingOrder.getServices);
+  r.post("/fee", common.shippingOrder.getPreviewFee);
+  r.post("/services", common.shippingOrder.getServices);
 };

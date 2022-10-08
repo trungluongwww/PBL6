@@ -1,7 +1,15 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import {
+  AfterInsert,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+} from "typeorm";
 import Order from "./order";
 import Product from "./product";
 import BaseEntity from "./base";
+import database from "../index";
 
 @Entity("order_and_products")
 export default class OrderAndProduct extends BaseEntity {
@@ -22,4 +30,22 @@ export default class OrderAndProduct extends BaseEntity {
 
   @Column({ name: "quantity", type: "int" })
   quantity: number;
+
+  @AfterInsert()
+  async after() {
+    try {
+      await database
+        .getDataSource()
+        .createQueryBuilder()
+        .update(Product)
+        .set({
+          quantity: () => `quantity - ${this.quantity}`,
+        })
+        .where("id =:id", { id: this.productId })
+        .execute();
+    } catch (err) {
+      console.log("***Error when update quantity product");
+      process.exit(1);
+    }
+  }
 }

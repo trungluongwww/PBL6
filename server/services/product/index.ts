@@ -1,5 +1,5 @@
-import calculatorTotal from "./calculator";
+import calculator from "./calculator";
 
 export default {
-  calculatorTotal,
+  calculator,
 };

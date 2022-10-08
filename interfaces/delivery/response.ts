@@ -1,10 +1,10 @@
-interface ICalculateFeeResponse {
+interface IGHNPreviewFeeResponse {
   code: number;
   message: string;
-  data: ICalculateFeeData;
+  data: IGHNPreviewFeeData;
 }
 
-interface ICalculateFeeData {
+interface IGHNPreviewFeeData {
   total: number;
   service_fee: number;
   insurance_fee: number;
@@ -13,21 +13,21 @@ interface ICalculateFeeData {
   r2s_fee: number;
 }
 
-interface IServiceResponse {
+interface IGHNServiceResponse {
   code: number;
   message: string;
-  data: [IServiceData] | null;
+  data: [IGHNServiceData] | null;
 }
 
-interface IServiceData {
+interface IGHNServiceData {
   service_id: number;
   short_name: string;
   service_type_id: number;
 }
 
 export {
-  ICalculateFeeResponse,
-  IServiceResponse,
-  ICalculateFeeData,
-  IServiceData,
+  IGHNPreviewFeeResponse,
+  IGHNServiceResponse,
+  IGHNPreviewFeeData,
+  IGHNServiceData,
 };

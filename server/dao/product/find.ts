@@ -8,9 +8,8 @@ const byIds = async (
 
   try {
     const q = db.createQueryBuilder(Product, "p");
-    q.select(["p.id", "p.price"]);
+    q.select(["p"]);
     q.where("p.id = ANY(:ids)", { ids });
-
     return [await q.getMany(), null];
   } catch (err) {
     console.log("*** Error when find product by ids", err);
