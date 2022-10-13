@@ -19,7 +19,9 @@ const calculateFee = async (
   orderInfo: IOrderInfo | null
 ): Promise<[IGHNPreviewFeeData | null, Error | null]> => {
   const deliveryCfg = delivery.getDeliveryConfig();
+
   let err;
+
   if (!orderInfo) {
     [orderInfo, err] = await services.product.calculator.infoOrder(
       payload.items
@@ -29,6 +31,7 @@ const calculateFee = async (
     }
   }
   console.log(orderInfo);
+
   const GHNPayload = {
     from_district_id: payload.from_district_id,
     service_id: payload.service_id,

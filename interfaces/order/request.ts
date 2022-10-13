@@ -1,5 +1,5 @@
 interface IOrderCreatePayload {
-  clientId: string;
+  customerId: string;
   shopId: string;
   address: string;
   toName: string;
@@ -17,4 +17,23 @@ interface IOrderItemPayload {
   quantity: number;
 }
 
-export { IOrderCreatePayload, IOrderItemPayload };
+interface IOrderQuerySearchByUser {
+  page: number;
+  limit: number;
+  status: string | null;
+  currentUserId: string;
+  userType: string;
+}
+
+interface IOrderDetailQuery {
+  currentUserId: string;
+  userType: string;
+  orderId: string;
+}
+
+export {
+  IOrderCreatePayload,
+  IOrderItemPayload,
+  IOrderQuerySearchByUser,
+  IOrderDetailQuery,
+};

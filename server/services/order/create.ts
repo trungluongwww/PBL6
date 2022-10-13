@@ -19,13 +19,11 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
   let [shop, _] = await services.account.find.byId(payload.shopId);
 
   if (!shop) {
-    console.log(shop, _);
     return Error("Invalid shop id");
   }
 
-  console.log("pass 1");
   const order = new Order();
-  order.clientId = payload.clientId;
+  order.customerId = payload.customerId;
   order.shopId = payload.shopId;
   order.address = payload.address;
   order.toName = payload.toName;
@@ -38,8 +36,7 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
   order.productIds = productIds;
   order.totalPrice = orderInfo.insurance_value;
   order.productDiscount = orderInfo.discount;
-  order.status = constants.order.status.waitingVerify;
-  console.log("pass 2");
+  order.status = constants.order.status.waitForConfirm;
 
   if (payload.voucherId) {
     const [voucher, _] = await services.voucher.find.validById(
@@ -52,17 +49,10 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
       order.voucherDiscount =
         ((order.totalPrice - order.productDiscount) * voucher.discountPercent) /
         100;
-      console.log(
-        order.voucherDiscount,
-        order.totalPrice,
-        order.productDiscount,
-        voucher.discountPercent
-      );
     } else {
       order.voucherDiscount = voucher.discountValue;
     }
   }
-  console.log("pass 3");
 
   {
     const [feeData, err] = await delivery.shippingOrder.calculateFee(
@@ -81,9 +71,7 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
 
     order.deliveryFee = feeData?.total || 0;
   }
-  console.log("pass 4");
   err = await dao.order.create(order);
-  console.log("pass 5");
   if (err) {
     return err;
   }
@@ -92,6 +80,5 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
   if (err) {
     return err;
   }
-  console.log("pass 6");
   return null;
 };

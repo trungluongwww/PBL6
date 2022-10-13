@@ -6,8 +6,9 @@ import helmet from "helmet";
 import cors from "cors";
 import order from "./order";
 import common from "./common";
-
+import jwt from "jsonwebtoken";
 import response from "../../ultilities/response";
+import services from "../services";
 
 export default (app: Express) => {
   app.use(helmet());
@@ -15,23 +16,34 @@ export default (app: Express) => {
   app.use(express.json());
   app.use(morgan("tiny"));
 
-  //   app.use(
-  //     expressjwt({ secret: process.env.JWT_SECRET || "", algorithms: ["HS256"] }),
-  //     (err:Error,req:Request,res:Response,next:NextFunction)=>{
-  //         if (err.name === "UnauthorizedError") {
-  //             res.status(401).send("invalid token...");
-  //           } else {
-  //             next();
-  //           }
-  //     }
-  //   );
-  //   app.use((req:Request,res:Response,next:NextFunction)=>{
-  //     if(req.auth?._id){
-  //         req.auth.id = req.auth._id
-  //         delete req.auth._id
-  //     }
-  //     next()
-  //   })
+  app.get("/tokens/:id", async (req, res) => {
+    const [payload, err] = await services.account.find.byId(req.params.id);
+    const token = jwt.sign(
+      {
+        ...payload,
+      },
+      process.env.SECRET_JWT || ""
+    );
+    return response.r200(res, { token });
+  });
+
+  app.use(
+    expressjwt({ secret: process.env.SECRET_JWT || "", algorithms: ["HS256"] }),
+    (err: Error, req: Request, res: Response, next: NextFunction) => {
+      if (err.name === "UnauthorizedError") {
+        res.status(401).send("invalid token...");
+      } else {
+        next();
+      }
+    }
+  );
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.auth?._id) {
+      req.auth.id = req.auth._id;
+      delete req.auth._id;
+    }
+    next();
+  });
   common(app);
   order(app);
   app.use("*", (req: Request, res: Response) => {

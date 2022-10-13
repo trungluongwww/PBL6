@@ -1,8 +1,9 @@
 export default {
   status: {
-    all: ["delivering", "finished", "waitingVerify"],
+    all: ["delivering", "completed", "wait_for_confirm", "cancelled"],
     delivering: "delivering",
-    finished: "finished",
-    waitingVerify: "waitingVerify",
+    finished: "completed",
+    waitForConfirm: "wait_for_confirm",
+    cancelled: "cancelled",
   },
 };

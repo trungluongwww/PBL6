@@ -1,8 +1,8 @@
 export default {
   role: {
-    all: ["guest", "seller", "admin"],
+    all: ["customer", "seller", "admin"],
     seller: "seller",
-    guest: "guest",
+    customer: "customer",
     admin: "admin",
   },
 };

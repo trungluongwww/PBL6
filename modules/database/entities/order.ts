@@ -6,25 +6,27 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
 } from "typeorm";
 import BaseEntity from "./base";
 import constants from "../../../constants";
 import Account from "./account";
 import Voucher from "./voucher";
 import database from "../index";
+import { OrderAndProduct } from "./index";
 
 @Entity("orders")
 export default class Order extends BaseEntity {
   @ManyToOne(() => Account, (account) => account.id, { nullable: false })
-  @JoinColumn({ name: "client_id" })
-  client: Account;
+  @JoinColumn({ name: "customer_id" })
+  customer: Account;
 
   @Column({
     type: "varchar",
-    name: "client_id",
+    name: "customer_id",
     nullable: false,
   })
-  clientId: string;
+  customerId: string;
 
   @ManyToOne(() => Account, (account) => account.id, { nullable: false })
   @JoinColumn({ name: "shop_id" })
@@ -151,9 +153,16 @@ export default class Order extends BaseEntity {
     name: "status",
     type: "enum",
     enum: constants.order.status.all,
-    default: constants.order.status.waitingVerify,
+    default: constants.order.status.waitForConfirm,
   })
   status: string;
+
+  @Column({
+    name: "search",
+    type: "text",
+    default: "",
+  })
+  search: string;
 
   @Column({
     name: "delete",
@@ -161,6 +170,9 @@ export default class Order extends BaseEntity {
     default: false,
   })
   isDelete: boolean;
+
+  @OneToMany(() => OrderAndProduct, (oap) => oap.order)
+  items: OrderAndProduct[];
 
   @AfterInsert()
   async after() {

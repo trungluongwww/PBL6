@@ -6,4 +6,10 @@ export default (e: Express) => {
   e.use("/orders", r);
 
   r.post("/", controllers.order.create);
+
+  r.get("/", controllers.order.find.pageByUser);
+
+  r.get("/:id", controllers.order.find.byId);
+
+  r.patch("/:id/confirm");
 };

@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import router from "./server/routes";
 import modules from "./modules";
+import dao from "./server/dao";
 async function init() {
   const app = express();
   dotenv.config();
