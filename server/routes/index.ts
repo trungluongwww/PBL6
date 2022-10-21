@@ -22,7 +22,10 @@ export default (app: Express) => {
       {
         ...payload,
       },
-      process.env.SECRET_JWT || ""
+      process.env.SECRET_JWT || "",
+      {
+        expiresIn: "90d",
+      }
     );
     return response.r200(res, { token });
   });
@@ -41,6 +44,14 @@ export default (app: Express) => {
     if (req.auth?._id) {
       req.auth.id = req.auth._id;
       delete req.auth._id;
+    }
+    if (req.auth?.user_id) {
+      req.auth.id = req.auth.user_id;
+      delete req.auth.user_id;
+    }
+    if (req.auth?.name_role) {
+      req.auth.role = req.auth.name_role;
+      delete req.auth.name_role;
     }
     next();
   });

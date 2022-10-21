@@ -31,9 +31,24 @@ interface IOrderDetailQuery {
   orderId: string;
 }
 
+interface IOrderUpdateStatusPayload {
+  status: string;
+  orderId: string;
+  currentUserId: string;
+  userType: string;
+}
+
+interface IOrderDeletePayload {
+  currentUserId: string;
+  typeUser: string;
+  orderId: string;
+}
+
 export {
   IOrderCreatePayload,
   IOrderItemPayload,
   IOrderQuerySearchByUser,
   IOrderDetailQuery,
+  IOrderUpdateStatusPayload,
+  IOrderDeletePayload,
 };

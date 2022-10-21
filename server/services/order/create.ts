@@ -72,6 +72,7 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
     order.deliveryFee = feeData?.total || 0;
   }
   err = await dao.order.create(order);
+  console.log(order);
   if (err) {
     return err;
   }

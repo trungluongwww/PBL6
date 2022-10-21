@@ -14,9 +14,17 @@ import Account from "./account";
 import Voucher from "./voucher";
 import database from "../index";
 import { OrderAndProduct } from "./index";
+import strings from "../../../ultilities/strings";
 
 @Entity("orders")
 export default class Order extends BaseEntity {
+  @Column({
+    type: "varchar",
+    name: "code",
+    nullable: true,
+  })
+  code: string;
+
   @ManyToOne(() => Account, (account) => account.id, { nullable: false })
   @JoinColumn({ name: "customer_id" })
   customer: Account;
@@ -165,11 +173,18 @@ export default class Order extends BaseEntity {
   search: string;
 
   @Column({
-    name: "delete",
+    name: "is_shop_deleted",
     type: "boolean",
     default: false,
   })
-  isDelete: boolean;
+  isShopDeleted: boolean;
+
+  @Column({
+    name: "is_customer_deleted",
+    type: "boolean",
+    default: false,
+  })
+  isCustomerDeleted: boolean;
 
   @OneToMany(() => OrderAndProduct, (oap) => oap.order)
   items: OrderAndProduct[];
@@ -193,6 +208,7 @@ export default class Order extends BaseEntity {
   }
   @BeforeInsert()
   before() {
+    this.code = strings.random.randomeCode();
     if (!this.total) {
       this.totalDiscount = this.voucherDiscount + this.productDiscount;
       this.total = this.totalPrice + this.deliveryFee - this.totalDiscount;

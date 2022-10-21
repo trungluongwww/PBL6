@@ -2,9 +2,8 @@ import { Account, Order } from "../../../modules/database/entities";
 import database from "../../../modules/database";
 import constants from "../../../constants";
 import { IOrderDetailQuery } from "../../../interfaces/order";
-import { query } from "express";
 
-const byId = async (
+const detailById = async (
   query: IOrderDetailQuery
 ): Promise<[Order | null, Error | null]> => {
   const db = database.getDataSource();
@@ -50,10 +49,34 @@ const byId = async (
     if (query.userType == constants.account.role.customer) {
       q.where("o.customerId = :id", { id: query.currentUserId });
     }
-    if (query.userType == constants.account.role.seller) {
+    if (query.userType == constants.account.role.shop) {
       q.where("o.shopId = :id", { id: query.currentUserId });
     }
     q.andWhere("o.id = :orderId", { orderId: query.orderId });
+    const rs = await q.getOne();
+
+    return [rs as Order, null];
+  } catch (err: unknown) {
+    console.log("***Error when find order", err);
+    return [null, err as Error];
+  }
+};
+
+const byId = async (
+  id: string,
+  typeUser: string
+): Promise<[Order | null, Error | null]> => {
+  const db = database.getDataSource();
+  try {
+    const q = db.createQueryBuilder(Order, "o");
+    q.select(["o.id", "o.shopId", "o.customerId", "o.status", "o.total"]);
+
+    if (typeUser == constants.account.role.shop) {
+      q.where("o.isCustomerDeleted = false AND o.id = :id", { id });
+    } else {
+      q.where("o.isShopDeleted = false AND o.id = :id", { id });
+    }
+
     const rs = await q.getOne();
 
     return [rs as Order, null];
@@ -99,10 +122,14 @@ const pageByUser = async (
       "p.avatar",
     ]);
     if (userType == constants.account.role.customer) {
-      q.where("o.customerId = :id", { id: currentUserId });
+      q.where("o.isCustomerDeleted = false AND o.customerId = :id", {
+        id: currentUserId,
+      });
     }
-    if (userType == constants.account.role.seller) {
-      q.where("o.shopId = :id", { id: currentUserId });
+    if (userType == constants.account.role.shop) {
+      q.where("o.isShopDeleted = false AND o.shopId = :id", {
+        id: currentUserId,
+      });
     }
 
     if (status) {
@@ -113,6 +140,8 @@ const pageByUser = async (
       .skip(skip)
       .take(limit)
       .getMany();
+    console.log(q.getQuery());
+    console.log(q.getParameters());
     return [rs, null];
   } catch (err) {
     console.log("*** Error when load order page");
@@ -121,6 +150,7 @@ const pageByUser = async (
 };
 
 export default {
-  byId,
+  detailById,
   pageByUser,
+  byId,
 };

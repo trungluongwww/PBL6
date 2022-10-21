@@ -35,7 +35,7 @@ const pageByClientId = async (
 };
 
 const byId = async (query: IOrderDetailQuery): Promise<[any, Error | null]> => {
-  const [order, err] = await dao.order.find.byId(query);
+  const [order, err] = await dao.order.find.detailById(query);
   if (err) {
     return [null, err];
   }
