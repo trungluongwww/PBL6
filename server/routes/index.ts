@@ -9,6 +9,7 @@ import common from "./common";
 import jwt from "jsonwebtoken";
 import response from "../../ultilities/response";
 import services from "../services";
+import review from "./review";
 
 export default (app: Express) => {
   app.use(helmet());
@@ -34,6 +35,7 @@ export default (app: Express) => {
     expressjwt({ secret: process.env.SECRET_JWT || "", algorithms: ["HS256"] }),
     (err: Error, req: Request, res: Response, next: NextFunction) => {
       if (err.name === "UnauthorizedError") {
+        console.log(err);
         res.status(401).send("invalid token...");
       } else {
         next();
@@ -57,6 +59,7 @@ export default (app: Express) => {
   });
   common(app);
   order(app);
+  review(app);
   app.use("*", (req: Request, res: Response) => {
     return response.r404(res, "The route not found");
   });

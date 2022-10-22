@@ -31,22 +31,6 @@ export default class OrderAndProduct extends BaseEntity {
   @Column({ name: "quantity", type: "int" })
   quantity: number;
 
-  @Column({
-    name: "comment",
-    type: "text",
-    nullable: true,
-    default: null,
-  })
-  comment: string;
-
-  @Column({
-    name: "rating",
-    type: "float",
-    nullable: true,
-    default: null,
-  })
-  rating: number;
-
   @AfterInsert()
   async after() {
     try {

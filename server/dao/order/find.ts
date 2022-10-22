@@ -69,7 +69,14 @@ const byId = async (
   const db = database.getDataSource();
   try {
     const q = db.createQueryBuilder(Order, "o");
-    q.select(["o.id", "o.shopId", "o.customerId", "o.status", "o.total"]);
+    q.select([
+      "o.id",
+      "o.shopId",
+      "o.customerId",
+      "o.status",
+      "o.total",
+      "o.productIds",
+    ]);
 
     if (typeUser == constants.account.role.shop) {
       q.where("o.isCustomerDeleted = false AND o.id = :id", { id });

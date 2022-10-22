@@ -7,8 +7,23 @@ import {
 import cstOrder from "../../../constants/order";
 import dao from "../../dao";
 import strings from "../../../ultilities/strings";
+import cstAccount from "../../../constants/account";
 
-const statusByCustomer = async (
+const status = async (
+  payload: IOrderUpdateStatusPayload
+): Promise<Error | null> => {
+  if (strings.array.include(cstAccount.role.all, payload.userType)) {
+    if (payload.userType == cstAccount.role.customer) {
+      return byCustomer(payload);
+    }
+    if (payload.userType == cstAccount.role.shop) {
+      return bySeller(payload);
+    }
+  }
+  return Error("No permission");
+};
+
+const byCustomer = async (
   payload: IOrderUpdateStatusPayload
 ): Promise<Error | null> => {
   const [order, err] = await dao.order.find.byId(
@@ -39,7 +54,7 @@ const statusByCustomer = async (
   return null;
 };
 
-const statusBySeller = async (
+const bySeller = async (
   payload: IOrderUpdateStatusPayload
 ): Promise<Error | null> => {
   const [order, err] = await dao.order.find.byId(
@@ -98,6 +113,5 @@ const checkUpdateStatusAllowed = (
 };
 
 export default {
-  statusBySeller,
-  statusByCustomer,
+  status,
 };

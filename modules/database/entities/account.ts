@@ -12,6 +12,14 @@ export default class Account extends BaseEntity {
   name: string;
 
   @Column({
+    type: "varchar",
+    name: "avatar",
+    nullable: true,
+    default: "default.png",
+  })
+  avatar: string;
+
+  @Column({
     type: "enum",
     enum: constants.account.role.all,
     name: "role",
