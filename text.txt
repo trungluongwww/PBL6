@@ -12,3 +12,4 @@ GHN_MASTERDATA_URL = https://online-gateway.ghn.vn/shiip/public-api/master-data/
 GHN_SHIPING_ORDER_URL = https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/
 GHN_SHOP_ID = 3268116
 GHN_TOKEN = eecc4477-3722-11ed-ad26-3a4226f77ff0
+SECRET_JWT = Quockhoa123!
