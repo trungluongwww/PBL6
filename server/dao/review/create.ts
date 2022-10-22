@@ -1,7 +1,7 @@
 import { Review } from "../../../modules/database/entities";
 import database from "../../../modules/database";
 export default async (review: Review): Promise<Error | null> => {
-  const b = await database.getDataSource();
+  const b = database.getDataSource();
   try {
     await b.manager.save(review);
     return null;

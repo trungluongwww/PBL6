@@ -6,6 +6,14 @@ interface IReviewCreatePayload {
   userType: string;
 }
 
+interface IReviewUpdatePayload {
+  reviewId: string;
+  content: string;
+  rating: number;
+  currentUserId: string;
+  userType: string;
+}
+
 interface IReviewQuery {
   product: string;
   limit: number;
@@ -15,4 +23,4 @@ interface IReviewQuery {
   userType: string;
 }
 
-export { IReviewQuery, IReviewCreatePayload };
+export { IReviewQuery, IReviewCreatePayload, IReviewUpdatePayload };

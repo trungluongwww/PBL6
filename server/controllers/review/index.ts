@@ -6,7 +6,11 @@ import {
 import services from "../../services";
 import response from "../../../ultilities/response";
 import { Response } from "express";
-import { IReviewCreatePayload, IReviewQuery } from "../../../interfaces/review";
+import {
+  IReviewCreatePayload,
+  IReviewQuery,
+  IReviewUpdatePayload,
+} from "../../../interfaces/review";
 
 const create = async (req: Request, res: Response) => {
   const payload = req.body as IReviewCreatePayload;
@@ -37,7 +41,22 @@ const findByProduct = async (req: Request, res: Response) => {
   return response.r200(res, rs);
 };
 
+const updateById = async (req: Request, res: Response) => {
+  const payload = req.body as IReviewUpdatePayload;
+  payload.reviewId = req.params.id;
+  payload.userType = req.auth?.role;
+  payload.currentUserId = req.auth?.id;
+
+  const err = await services.review.update.byId(payload);
+  if (err) {
+    return response.r400(res, {}, err.message);
+  }
+
+  return response.r200(res, {});
+};
+
 export default {
   findByProduct,
   create,
+  updateById,
 };

@@ -13,13 +13,14 @@ export default async (payload: IReviewCreatePayload): Promise<Error | null> => {
   if (await checkReviewExist(order.id)) {
     return Error("Already exist");
   }
-
+  let rating =
+    payload.rating >= 1 && payload.rating <= 5 ? Math.round(payload.rating) : 0;
   const review = new Review();
   review.orderId = order.id;
   review.customerId = order.customerId;
   review.productIds = order.productIds;
   review.content = payload.content;
-  review.rating = payload.rating;
+  review.rating = rating;
 
   const err = await dao.review.create(review);
   if (err) {

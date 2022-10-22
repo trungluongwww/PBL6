@@ -51,7 +51,23 @@ const byOrderId = async (
   }
 };
 
+const byId = async (id: string): Promise<[Review | null, Error | null]> => {
+  const db = database.getDataSource();
+
+  try {
+    const q = db.createQueryBuilder(Review, "rv");
+    q.where("rv.id = :id", { id });
+    q.select("rv");
+
+    return [await q.getOne(), null];
+  } catch (err: unknown) {
+    console.log("Error find review", err);
+    return [null, err as Error];
+  }
+};
+
 export default {
   pageByProductId,
   byOrderId,
+  byId,
 };

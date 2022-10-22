@@ -8,4 +8,6 @@ export default (e: Express) => {
   r.post("/", controllers.review.create);
 
   r.get("/", controllers.review.findByProduct);
+
+  r.put("/:id", controllers.review.updateById);
 };
