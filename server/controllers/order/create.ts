@@ -7,6 +7,7 @@ import response from "../../../ultilities/response";
 export default async (req: Request, res: Response) => {
   const payload = req.body as IOrderCreatePayload;
   payload.customerId = req.auth?.id;
+  console.log(payload);
   const err = await services.order.create(payload);
   if (err) {
     return response.r400(res, {}, err.message);
