@@ -18,6 +18,7 @@ async function init() {
 
   const tunnel = await localtunnel({
     port: 5000,
+    subdomain: "trungluong",
   });
 
   console.log(tunnel.url);
