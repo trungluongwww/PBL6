@@ -24,13 +24,13 @@ const pageByProductId = async (
     rating
   );
 
-  const [numOfPage,avg] = await dao.review.find.infoReviewByProductId(query.product)
+  const [count,avg] = await dao.review.find.infoReviewByProductId(query.product)
 
   if (err) {
     return [null, Error("Common somethong error")];
   }
   return [{
-    numOfPage:Math.floor(numOfPage)+1,
+    numOfPage:Math.floor(count/limit)+1,
     limit:limit,
     page:query.page,
     reviews:reviews,
