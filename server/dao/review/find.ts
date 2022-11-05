@@ -66,8 +66,27 @@ const byId = async (id: string): Promise<[Review | null, Error | null]> => {
   }
 };
 
+const infoReviewByProductId = async (productId:string):Promise<[number,number]>=>{
+  const db = database.getDataSource();
+
+  try {
+    const q = db.createQueryBuilder(Review, "rv");
+    q.where(":productId = ANY(rv.productIds)", { productId });
+    const count =  await q.getCount();
+    const ave = await q.select('AVG(rv.rating)', 'avg').getRawOne()
+    return [count,ave]
+
+  } catch (err: unknown) {
+    console.log("Error find review", err);
+    return [0,0];
+  }
+}
+
+
+
 export default {
   pageByProductId,
   byOrderId,
   byId,
+  infoReviewByProductId
 };
