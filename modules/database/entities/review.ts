@@ -12,7 +12,7 @@ import BaseEntity from "./base";
 import Account from "./account";
 
 @Entity("reviews")
-export default class OrderAndProduct extends BaseEntity {
+export default class Review extends BaseEntity {
   @ManyToOne(() => Order, (order) => order.id, { nullable: false })
   @JoinColumn({ name: "order_id" })
   @Index()
