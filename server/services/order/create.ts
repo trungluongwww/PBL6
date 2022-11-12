@@ -1,17 +1,22 @@
-import { IOrderCreatePayload } from "../../../interfaces/order";
+import {
+  IOrderCreatePayload,
+  IOrderItemPayload,
+} from "../../../interfaces/order";
 import { Order } from "../../../modules/database/entities";
 import services from "../index";
 import constants from "../../../constants";
 import dao from "../../dao";
 import delivery from "../../../modules/delivery";
+import rabbitmq from "../../../modules/rabbitmq";
 
 export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
+  publicChangeProductQuantity(payload.items).then();
   const productIds = payload.items.map((item) => item.product_id);
 
   let [orderInfo, err] = await services.product.calculator.infoOrder(
     payload.items
   );
-  console.log(orderInfo, err);
+
   if (err || !orderInfo) {
     return err;
   }
@@ -82,4 +87,8 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
     return err;
   }
   return null;
+};
+
+const publicChangeProductQuantity = async (items: Array<IOrderItemPayload>) => {
+  rabbitmq.pub.Public(constants.rabbit.decreaseQuantityProductEvent, items);
 };

@@ -7,7 +7,7 @@ export default class Account extends BaseEntity {
   @Column({
     type: "text",
     name: "name",
-    nullable: false,
+    nullable: true,
   })
   name: string;
 
@@ -36,7 +36,7 @@ export default class Account extends BaseEntity {
 
   @Column({
     type: "varchar",
-    nullable: false,
+    nullable: true,
     name: "phone",
   })
   phone: string;

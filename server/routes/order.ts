@@ -1,17 +1,22 @@
-import express, { Express } from "express";
+import express, { Express, Router } from "express";
 import controllers from "../controllers";
+import validations from "./validations";
 
-export default (e: Express) => {
+export default (e: Router) => {
   const r = express.Router();
   e.use("/orders", r);
 
-  r.post("/", controllers.order.create);
+  r.post("/", ...validations.order.create, controllers.order.create);
 
-  r.get("/", controllers.order.find.pageByUser);
+  r.get("/", ...validations.order.search, controllers.order.find.pageByUser);
 
-  r.get("/:id", controllers.order.find.byId);
+  r.get("/:id", ...validations.order.getDetail, controllers.order.find.byId);
 
-  r.patch("/:id", controllers.order.update.status);
+  r.patch(
+    "/:id",
+    ...validations.order.updateStatus,
+    controllers.order.update.status
+  );
 
-  r.delete("/:id", controllers.order.del);
+  r.delete("/:id", ...validations.order.delete, controllers.order.del);
 };

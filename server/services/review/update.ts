@@ -13,7 +13,7 @@ const byId = async (payload: IReviewUpdatePayload): Promise<Error | null> => {
     return Error("No permission");
   }
 
-  const err = await dao.review.update.statusById(
+  const err = await dao.review.update.byId(
     payload.reviewId,
     payload.content,
     rating

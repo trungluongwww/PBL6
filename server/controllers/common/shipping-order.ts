@@ -9,6 +9,9 @@ import {
 
 const getServices = async (req: Request, res: Response) => {
   const payload = req.body as IGHNServicePayload;
+  payload.from_district = Number(payload.from_district);
+  payload.to_district = Number(payload.to_district);
+
   const [data, err] = await delivery.shippingOrder.getServices(payload);
   if (err) {
     return response.r400(res, {}, err.message);
@@ -18,6 +21,9 @@ const getServices = async (req: Request, res: Response) => {
 
 const getPreviewFee = async (req: Request, res: Response) => {
   const payload = req.body as IDeliveryPreviewFeePayload;
+  payload.to_district_id = Number(payload.to_district_id);
+  payload.from_district_id = Number(payload.from_district_id);
+
   const [data, err] = await delivery.shippingOrder.calculateFee(payload, null);
   if (err) {
     return response.r400(res, {}, err.message);

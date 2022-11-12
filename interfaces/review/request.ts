@@ -23,4 +23,13 @@ interface IReviewQuery {
   userType: string;
 }
 
-export { IReviewQuery, IReviewCreatePayload, IReviewUpdatePayload };
+interface IRemoveReviewPayload {
+  id: string;
+  currentUserId: string;
+}
+export {
+  IReviewQuery,
+  IReviewCreatePayload,
+  IRemoveReviewPayload,
+  IReviewUpdatePayload,
+};

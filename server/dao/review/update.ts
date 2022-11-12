@@ -1,7 +1,7 @@
 import { Review } from "../../../modules/database/entities";
 import database from "../../../modules/database";
 
-const statusById = async (
+const byId = async (
   id: string,
   content: string,
   rating: number
@@ -25,5 +25,5 @@ const statusById = async (
 };
 
 export default {
-  statusById,
+  byId,
 };

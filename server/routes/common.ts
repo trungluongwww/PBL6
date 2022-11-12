@@ -1,10 +1,7 @@
-import express, { Express } from "express";
+import express, { Express, Router } from "express";
 import common from "../controllers/common";
 
-export default (e: Express) => {
-  const r = express.Router();
-
-  e.use("/", r);
+export default (r: Router) => {
   r.get("/provinces", common.masterData.getProvinces);
   r.get("/wards/:id", common.masterData.getWards);
   r.get("/districts/:id", common.masterData.getDistricts);
