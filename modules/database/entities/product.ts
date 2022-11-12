@@ -4,6 +4,13 @@ import BaseEntity from "./base";
 @Entity({ name: "products" })
 export default class Product extends BaseEntity {
   @Column({
+    name: "shopId",
+    type: "varchar",
+    nullable: false,
+  })
+  shopId: string;
+
+  @Column({
     name: "name",
     type: "varchar",
     nullable: false,
@@ -65,12 +72,19 @@ export default class Product extends BaseEntity {
     type: "decimal",
     name: "discount",
     default: 0,
+    nullable: true,
   })
   discount: number;
 
   @Column({
     type: "boolean",
-    name: "active",
+    name: "is_active",
   })
   isActive: boolean;
+
+  @Column({
+    type: "boolean",
+    name: "is_deleted",
+  })
+  isDeleted: boolean;
 }

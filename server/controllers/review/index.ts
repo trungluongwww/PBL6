@@ -7,6 +7,7 @@ import services from "../../services";
 import response from "../../../ultilities/response";
 import { Response } from "express";
 import {
+  IRemoveReviewPayload,
   IReviewCreatePayload,
   IReviewQuery,
   IReviewUpdatePayload,
@@ -55,8 +56,23 @@ const updateById = async (req: Request, res: Response) => {
   return response.r200(res, {});
 };
 
+const removeById = async (req: Request, res: Response) => {
+  const payload = {
+    id: req.params.id,
+    currentUserId: req.auth?.id,
+  } as IRemoveReviewPayload;
+
+  const err = await services.review.del.byId(payload);
+  if (err) {
+    return response.r400(res, {}, err.message);
+  }
+
+  return response.r200(res, {});
+};
+
 export default {
   findByProduct,
   create,
   updateById,
+  removeById,
 };

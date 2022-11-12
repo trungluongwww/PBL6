@@ -24,14 +24,14 @@ export default class Voucher extends BaseEntity {
   code: string;
 
   @Column({
-    type: "decimal",
+    type: "float",
     name: "discount_percent",
     default: 0,
   })
   discountPercent: number;
 
   @Column({
-    type: "decimal",
+    type: "float",
     name: "discount_value",
     default: 0,
   })

@@ -19,21 +19,21 @@ import { buffer } from "stream/consumers";
 // }
 // main();
 
-const a = {
-  _id: "6350d7asdfd596a636276ff6",
-  content: "trungluongw",
-  isRead: false,
-  title: "Selly",
-  updatedAt: Date.now().toString(),
-  targetId: "6350d79fdad596a636276ff6",
-  analyticLabel: null,
-  icon: null,
-  imageURL: null,
-  category: "text",
-  action: {
-    type: "OPEN_APP_BROWSER",
-    value: "https://chat.unibag.xyz/#6350d79fdad596a636276ff6&sourch=selly_app",
-  },
-};
+// const a = {
+//   _id: "6350d7asdfd596a636276ff6",
+//   content: "trungluongw",
+//   isRead: false,
+//   title: "Selly",
+//   updatedAt: Date.now().toString(),
+//   targetId: "6350d79fdad596a636276ff6",
+//   analyticLabel: null,
+//   icon: null,
+//   imageURL: null,
+//   category: "text",
+//   action: {
+//     type: "OPEN_APP_BROWSER",
+//     value: "https://chat.unibag.xyz/#6350d79fdad596a636276ff6&sourch=selly_app",
+//   },
+// };
 
-console.log(JSON.stringify(a));
+// console.log(JSON.stringify(a));

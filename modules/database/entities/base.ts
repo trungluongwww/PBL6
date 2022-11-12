@@ -26,7 +26,9 @@ export default class BaseEntity {
 
   @BeforeInsert()
   setId() {
-    this.id = uuid();
+    if (!this.id) {
+      this.id = uuid();
+    }
     if (!this.createdAt) {
       this.createdAt = new Date();
     }

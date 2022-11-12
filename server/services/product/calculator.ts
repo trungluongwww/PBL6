@@ -26,7 +26,6 @@ const infoOrder = async (
     const product = mapProduct.get(orderItems[i].product_id);
 
     if (product) {
-      console.log(product, "======", orderItems[i]);
       if (orderItems[i].quantity > product.quantity || product.quantity < 1) {
         return [null, Error("Invalid quantity")];
       }

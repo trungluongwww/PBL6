@@ -1,7 +1,7 @@
-import express, { Express } from "express";
+import express, { Express, Router } from "express";
 import controllers from "../controllers";
 
-export default (e: Express) => {
+export default (e: Router) => {
   const r = express.Router();
   e.use("/reviews", r);
 
@@ -10,4 +10,6 @@ export default (e: Express) => {
   r.get("/", controllers.review.findByProduct);
 
   r.put("/:id", controllers.review.updateById);
+
+  r.delete("/:id", controllers.review.removeById);
 };
