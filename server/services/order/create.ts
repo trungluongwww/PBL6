@@ -8,13 +8,19 @@ import constants from "../../../constants";
 import dao from "../../dao";
 import delivery from "../../../modules/delivery";
 import rabbitmq from "../../../modules/rabbitmq";
+import email from "../../../modules/email";
 
 export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
   publicChangeProductQuantity(payload.items).then();
   const productIds = payload.items.map((item) => item.product_id);
+  const [customer, e] = await services.account.find.byId(payload.customerId);
+  if (e || !customer) {
+    return Error("account not found");
+  }
 
   let [orderInfo, err] = await services.product.calculator.infoOrder(
-    payload.items
+    payload.items,
+    payload.shopId
   );
 
   if (err || !orderInfo) {
@@ -76,16 +82,23 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
 
     order.deliveryFee = feeData?.total || 0;
   }
+
   err = await dao.order.create(order);
-  console.log(order);
   if (err) {
     return err;
   }
 
   err = await services.orderAndProduct.create.many(order.id, payload.items);
   if (err) {
+    dao.order.del.byAdmin(order.id).then();
+    services.orderAndProduct.del.manyByOrderId(order.id).then();
     return err;
   }
+
+  if (customer.email) {
+    email.order.createOrder(customer.email, order.total);
+  }
+
   return null;
 };
 

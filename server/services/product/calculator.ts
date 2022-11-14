@@ -3,7 +3,8 @@ import { IOrderInfo, IOrderItemPayload } from "../../../interfaces/order";
 import { Product } from "../../../modules/database/entities";
 
 const infoOrder = async (
-  orderItems: Array<IOrderItemPayload>
+  orderItems: Array<IOrderItemPayload>,
+  shopId: string | null
 ): Promise<[IOrderInfo | null, null | Error]> => {
   const [products, err] = await dao.product.find.byIds(
     orderItems.map((item) => item.product_id)
@@ -14,9 +15,18 @@ const infoOrder = async (
   }
 
   const mapProduct = new Map<string, Product>();
+
+  let err2 = null;
   products?.forEach((product) => {
+    if (product.shopId != shopId && shopId != null) {
+      err2 = Error("product no exist in shop");
+    }
     mapProduct.set(product.id, product);
   });
+
+  if (err2) {
+    return [null, err2];
+  }
 
   let totalPrice = 0;
   let discount = 0;

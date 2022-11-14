@@ -3,11 +3,11 @@ import { param, body, validationResult } from "express-validator";
 import response from "../../../ultilities/response";
 
 const paramId = (name: string = "id") => {
-  return [param(name).isUUID("all").withMessage("invalid id")];
+  return param(name).isUUID("all").withMessage("invalid id");
 };
 
 const bodyId = (name: string = "id") => {
-  return [body(name).isUUID("all").withMessage("invalid id")];
+  return body(name).isUUID("all").withMessage("invalid id");
 };
 
 const checkErrors = (req: Request, res: Response, next: NextFunction) => {

@@ -24,7 +24,8 @@ const calculateFee = async (
 
   if (!orderInfo) {
     [orderInfo, err] = await services.product.calculator.infoOrder(
-      payload.items
+      payload.items,
+      null
     );
     if (err) {
       return [null, err];
@@ -38,7 +39,7 @@ const calculateFee = async (
     to_district_id: payload.to_district_id,
     to_ward_code: payload.to_ward_code,
     height: orderInfo?.height || 0,
-    weight: orderInfo?.weight || 0,
+    weight: orderInfo ? Math.floor(orderInfo.weight) : 0,
     length: orderInfo?.length || 0,
     width: orderInfo?.width || 0,
     insurance_value: orderInfo?.insurance_value,
@@ -48,7 +49,16 @@ const calculateFee = async (
     service_type_id: null,
     coupon: null,
   });
-  console.log(deliveryCfg);
+
+  if (
+    GHNPayload.weight < 1 ||
+    GHNPayload.height < 1 ||
+    GHNPayload.length < 1 ||
+    GHNPayload.width < 1
+  ) {
+    return [null, Error("invalid info product")];
+  }
+
   const result = await fetch(
     deliveryCfg.shippingOrderURL + constants.delivery.calCulateFee,
     {

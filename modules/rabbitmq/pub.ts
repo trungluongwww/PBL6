@@ -1,5 +1,4 @@
 import rabbitmq from "./index";
-import { IMessageRabbit } from "../../interfaces/rabbit";
 
 const Public = (key: string, data: any) => {
   const conn = rabbitmq.getConnection();

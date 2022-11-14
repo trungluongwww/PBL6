@@ -1,9 +1,4 @@
-import {
-  IOrderDeletePayload,
-  IOrderDetailQuery,
-  IOrderQuerySearchByUser,
-  IOrderUpdateStatusPayload,
-} from "../../../interfaces/order";
+import { IOrderDeletePayload } from "../../../interfaces/order";
 
 import constants from "../../../constants";
 import dao from "../../dao";
@@ -33,7 +28,7 @@ export default async (payload: IOrderDeletePayload): Promise<Error | null> => {
     return Error("Cannot be delete");
   }
 
-  const err = await dao.order.del(order.id, payload.typeUser);
+  const err = await dao.order.del.byId(order.id, payload.typeUser);
   if (err) {
     return Error("Bad request");
   }

@@ -25,7 +25,8 @@ export default class Product extends BaseEntity {
 
   @Column({
     name: "weight",
-    type: "decimal",
+    type: "int",
+    default: 0,
   })
   weight: number;
 

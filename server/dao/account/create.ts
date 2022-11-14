@@ -8,7 +8,8 @@ export default async (account: Account): Promise<Error | null> => {
     await db.manager.save(account);
     return null;
   } catch (err: unknown) {
-    console.log("Error when add new account from rabbit");
-    return err as Error;
+    const Err = err as Error;
+    console.log("[Rabbit Error] when add new account from rabbit", Err.message);
+    return Err;
   }
 };

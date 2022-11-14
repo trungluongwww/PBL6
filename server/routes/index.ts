@@ -6,9 +6,7 @@ import helmet from "helmet";
 import cors from "cors";
 import order from "./order";
 import common from "./common";
-import jwt from "jsonwebtoken";
 import response from "../../ultilities/response";
-import services from "../services";
 import review from "./review";
 import voucher from "./voucher";
 
@@ -31,6 +29,7 @@ export default (app: Express) => {
       }
     }
   );
+
   privateRoute.use((req: Request, res: Response, next: NextFunction) => {
     if (req.auth?._id) {
       req.auth.id = req.auth._id;
@@ -40,18 +39,20 @@ export default (app: Express) => {
       req.auth.id = req.auth.user_id;
       delete req.auth.user_id;
     }
-    if (req.auth?.name_role) {
-      req.auth.role = req.auth.name_role;
-      delete req.auth.name_role;
+    if (req.auth?.role_name) {
+      req.auth.role = req.auth.role_name;
+      delete req.auth.role_name;
     }
     next();
   });
+
   app.use("/api/v1/sv3", publicRoute);
   app.use("/api/v1/sv3", privateRoute);
   common(publicRoute);
   order(privateRoute);
   review(privateRoute);
   voucher(privateRoute);
+
   app.use("*", (req: Request, res: Response) => {
     return response.r404(res, "The route not found");
   });

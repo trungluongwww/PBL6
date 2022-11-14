@@ -2,7 +2,7 @@ import { Account, Order } from "../../../modules/database/entities";
 import database from "../../../modules/database";
 import constants from "../../../constants";
 
-export default async (id: string, typeUser: string): Promise<Error | null> => {
+const byId = async (id: string, typeUser: string): Promise<Error | null> => {
   const db = database.getDataSource();
 
   try {
@@ -22,4 +22,23 @@ export default async (id: string, typeUser: string): Promise<Error | null> => {
     console.log("*** Error when delete order:", err);
     return err as Error;
   }
+};
+
+const byAdmin = async (id: string): Promise<Error | null> => {
+  const db = database.getDataSource();
+
+  try {
+    const q = db.createQueryBuilder().update(Order);
+    q.where("id = :id", { id });
+    await q.execute();
+    return null;
+  } catch (err: unknown) {
+    console.log("*** Error when delete order:", err);
+    return err as Error;
+  }
+};
+
+export default {
+  byId,
+  byAdmin,
 };

@@ -1,7 +1,7 @@
 import { Voucher } from "../../../modules/database/entities";
 import database from "../../../modules/database";
 
-const create = async (voucher: Voucher): Promise<Error | null> => {
+const byId = async (voucher: Voucher): Promise<Error | null> => {
   const db = database.getDataSource();
 
   try {
@@ -9,9 +9,11 @@ const create = async (voucher: Voucher): Promise<Error | null> => {
     return null;
   } catch (err: unknown) {
     const error = err as Error;
-    console.log("Error when createVoucher:" + error.message);
+    console.log("[Error] Error when update voucher:" + error.message);
     return error;
   }
 };
 
-export default create;
+export default {
+  byId,
+};

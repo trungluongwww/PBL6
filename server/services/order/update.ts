@@ -1,8 +1,4 @@
-import {
-  IOrderDetailQuery,
-  IOrderQuerySearchByUser,
-  IOrderUpdateStatusPayload,
-} from "../../../interfaces/order";
+import { IOrderUpdateStatusPayload } from "../../../interfaces/order";
 
 import cstOrder from "../../../constants/order";
 import dao from "../../dao";

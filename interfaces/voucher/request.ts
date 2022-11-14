@@ -15,6 +15,8 @@ interface IVoucherPayload {
 }
 
 interface IVoucherUpdatePayload {
+  id: string;
+
   name: string;
 
   description: string;
@@ -30,4 +32,10 @@ interface IVoucherUpdatePayload {
   isActive: boolean;
 }
 
-export { IVoucherPayload };
+interface IVoucherDeletePayload {
+  id: string;
+  role: string;
+  currentUserId: string;
+}
+
+export { IVoucherPayload, IVoucherUpdatePayload, IVoucherDeletePayload };

@@ -37,3 +37,10 @@ import { buffer } from "stream/consumers";
 // };
 
 // console.log(JSON.stringify(a));
+
+console.log(
+  (2500).toLocaleString("vn-VN", {
+    style: "currency",
+    currency: "VND",
+  })
+);

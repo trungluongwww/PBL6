@@ -10,7 +10,7 @@ const validById = async (
     const q = db.createQueryBuilder(Voucher, "v");
     q.select(["v.discountPercent", "v.discountValue", "v.id"]);
     q.where("v.id = :id", { id });
-    q.andWhere("v.is_delete != false AND v.is_active != false");
+    q.andWhere("v.is_delete = false AND v.is_active = true");
     q.andWhere("v.quantity > 0");
 
     const rs = await q.getOne();
@@ -66,8 +66,24 @@ const active = async (): Promise<[Array<Voucher>, Error | null]> => {
   }
 };
 
+const byId = async (id: string): Promise<[Voucher | null, Error | null]> => {
+  const db = database.getDataSource();
+
+  try {
+    const q = db.createQueryBuilder(Voucher, "v");
+    q.where("v.id = :id", { id });
+    q.select("v");
+    const rs = await q.getOne();
+    return [rs, null];
+  } catch (err: unknown) {
+    console.log("[Error] Error when get voucher", err);
+    return [null, err as Error];
+  }
+};
+
 export default {
   validById,
   validByCode,
   active,
+  byId,
 };

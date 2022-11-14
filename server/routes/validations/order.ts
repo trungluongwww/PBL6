@@ -26,7 +26,7 @@ const create = () => {
     ])
       .notEmpty()
       .withMessage("some fields is empty value"),
-    ...bodyId("shopId"),
+    bodyId("shopId"),
   ];
 };
 

@@ -5,10 +5,11 @@ import {
 
 import constants from "../../../constants";
 import dao from "../../dao";
+import { Order } from "../../../modules/database/entities";
 
 const pageByClientId = async (
   query: IOrderQuerySearchByUser
-): Promise<[Array<any> | null, Error | null]> => {
+): Promise<[any | null, Error | null]> => {
   query.limit = query.limit >= 1 ? Math.round(query.limit) : 10;
 
   let skip = query.page >= 1 ? (Math.round(query.page) - 1) * query.limit : 0;
@@ -31,7 +32,18 @@ const pageByClientId = async (
   if (err) {
     return [null, err];
   }
-  return [orders, null];
+  let response: any = {
+    orders: [],
+    numOfPage: 1,
+  };
+  if (orders) {
+    response = {
+      orders,
+      numOfPage: Math.floor(orders.length / query.limit) + 1,
+    };
+  }
+
+  return [response, null];
 };
 
 const byId = async (query: IOrderDetailQuery): Promise<[any, Error | null]> => {

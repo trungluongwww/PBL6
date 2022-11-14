@@ -147,8 +147,7 @@ const pageByUser = async (
       .skip(skip)
       .take(limit)
       .getMany();
-    console.log(q.getQuery());
-    console.log(q.getParameters());
+
     return [rs, null];
   } catch (err) {
     console.log("*** Error when load order page");

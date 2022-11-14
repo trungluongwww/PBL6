@@ -26,10 +26,7 @@ const Subcrises = async () => {
         if (error2) {
           throw error2;
         }
-        console.log(
-          " [*] Waiting for messages in %s. To exit press CTRL+C",
-          q.queue
-        );
+        console.log("⚡ [RabbitMQ] Waiting for messages in %s", q.queue);
         channel.bindQueue(q.queue, "ECommerce", "");
         channel.consume(
           q.queue,
@@ -38,7 +35,6 @@ const Subcrises = async () => {
               const data = JSON.parse(
                 Buffer.from(msg.content).toString()
               ) as IMessageRabbit;
-
               console.log("routing key: " + msg.fields.routingKey);
 
               switch (msg.fields.routingKey) {
@@ -70,6 +66,7 @@ const Subcrises = async () => {
 
 const addUser = async (msg: IMessageRabbit, role: string | null) => {
   const newUser = JSON.parse(msg.message) as INewUser;
+  console.log(newUser);
   await services.account.create.addUserFromRabbit(newUser, role);
 };
 
