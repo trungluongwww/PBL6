@@ -14,3 +14,5 @@ GHN_SHOP_ID=3268116
 GHN_TOKEN=eecc4477-3722-11ed-ad26-3a4226f77ff0
 SECRET_JWT=Quockhoa123!
 RABBITMQ_URL=amqps://fkvbbddc:ALJpxxB4zIfIpYbwN2DhTqFPpzIcc46R@armadillo.rmq.cloudamqp.com/fkvbbddc
+GMAIL_USERNAME=trungluong.selly@gmail.com
+GMAIL_PASSWORD=zufgyhdmxkvhiokm
