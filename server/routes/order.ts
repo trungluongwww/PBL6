@@ -1,10 +1,11 @@
 import express, { Express, Router } from "express";
 import controllers from "../controllers";
 import validations from "./validations";
+import required from "./required";
 
 export default (e: Router) => {
   const r = express.Router();
-  e.use("/orders", r);
+  e.use("/orders", required.login, r);
 
   r.post("/", ...validations.order.create, controllers.order.create);
 

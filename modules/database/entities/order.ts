@@ -4,9 +4,11 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
 } from "typeorm";
 import BaseEntity from "./base";
 import constants from "../../../constants";
@@ -15,6 +17,7 @@ import Voucher from "./voucher";
 import database from "../index";
 import { OrderAndProduct } from "./index";
 import strings from "../../../ultilities/strings";
+import Review from "./review";
 
 @Entity("orders")
 export default class Order extends BaseEntity {
@@ -117,42 +120,42 @@ export default class Order extends BaseEntity {
 
   @Column({
     name: "total_discount",
-    type: "decimal",
+    type: "float",
     default: 0,
   })
   totalDiscount: number;
 
   @Column({
     name: "product_discount",
-    type: "decimal",
+    type: "float",
     default: 0,
   })
   productDiscount: number;
 
   @Column({
     name: "voucher_discount",
-    type: "decimal",
+    type: "float",
     default: 0,
   })
   voucherDiscount: number;
 
   @Column({
     name: "total_price",
-    type: "decimal",
+    type: "float",
     default: 0,
   })
   totalPrice: number;
 
   @Column({
     name: "delivery_fee",
-    type: "decimal",
+    type: "float",
     default: 0,
   })
   deliveryFee: number;
 
   @Column({
     name: "total",
-    type: "decimal",
+    type: "float",
     default: 0,
   })
   total: number;
@@ -163,6 +166,7 @@ export default class Order extends BaseEntity {
     enum: constants.order.status.all,
     default: constants.order.status.waitForConfirm,
   })
+  @Index()
   status: string;
 
   @Column({

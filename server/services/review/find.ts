@@ -44,6 +44,14 @@ const pageByProductId = async (
   ];
 };
 
+const byOrderId = async (
+  orderId: string
+): Promise<[Review | null, Error | null]> => {
+  const [rv, err] = await dao.review.find.byOrderId(orderId);
+  return [rv, err];
+};
+
 export default {
   pageByProductId,
+  byOrderId,
 };

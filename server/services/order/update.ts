@@ -70,7 +70,7 @@ const bySeller = async (
 
   if (!strings.array.include(cstOrder.permissions.seller, payload.status))
     return Error("Bad request");
-  if (checkUpdateStatusAllowed(order.status, payload.status))
+  if (!checkUpdateStatusAllowed(order.status, payload.status))
     return Error("Bad request");
 
   {

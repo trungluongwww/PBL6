@@ -37,6 +37,7 @@ const detailById = async (
       "as.name",
       "as.phone",
       "as.email",
+      "as.avatar",
       "oap.id",
       "oap.quantity",
       "oap.product",
@@ -45,6 +46,7 @@ const detailById = async (
       "p.description",
       "p.price",
       "p.avatar",
+      "p.discount",
     ]);
     if (query.userType == constants.account.role.customer) {
       q.where("o.customerId = :id", { id: query.currentUserId });
@@ -118,6 +120,7 @@ const pageByUser = async (
       "o.createdAt",
       "o.updatedAt",
       "as.id",
+      "as.avatar",
       "as.name",
       "oap.id",
       "oap.quantity",

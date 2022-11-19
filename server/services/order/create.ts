@@ -9,9 +9,9 @@ import dao from "../../dao";
 import delivery from "../../../modules/delivery";
 import rabbitmq from "../../../modules/rabbitmq";
 import email from "../../../modules/email";
+import transaction from "../../transaction";
 
 export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
-  publicChangeProductQuantity(payload.items).then();
   const productIds = payload.items.map((item) => item.product_id);
   const [customer, e] = await services.account.find.byId(payload.customerId);
   if (e || !customer) {
@@ -31,6 +31,10 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
 
   if (!shop) {
     return Error("Invalid shop id");
+  }
+
+  if (shop.id == customer.id) {
+    return Error("Không thể mua hàng của chính bạn");
   }
 
   const order = new Order();
@@ -83,22 +87,28 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
     order.deliveryFee = feeData?.total || 0;
   }
 
-  err = await dao.order.create(order);
-  if (err) {
-    return err;
-  }
+  // err = await dao.order.create(order);
+  // if (err) {
+  //   return err;
+  // }
+  //
+  // err = await services.orderAndProduct.create.many(order.id, payload.items);
+  // if (err) {
+  //   dao.order.del.byAdmin(order.id).then();
+  //   services.orderAndProduct.del.manyByOrderId(order.id).then();
+  //   return err;
+  // }
 
-  err = await services.orderAndProduct.create.many(order.id, payload.items);
+  err = await transaction.order.create(order, payload.items);
+
   if (err) {
-    dao.order.del.byAdmin(order.id).then();
-    services.orderAndProduct.del.manyByOrderId(order.id).then();
     return err;
   }
 
   if (customer.email) {
     email.order.createOrder(customer.email, order.total);
   }
-
+  publicChangeProductQuantity(payload.items).then();
   return null;
 };
 
