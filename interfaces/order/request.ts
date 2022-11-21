@@ -23,6 +23,7 @@ interface IOrderQuerySearchByUser {
   status: string | null;
   currentUserId: string;
   userType: string;
+  shopId: string;
 }
 
 interface IOrderDetailQuery {
@@ -33,6 +34,7 @@ interface IOrderDetailQuery {
 
 interface IOrderUpdateStatusPayload {
   status: string;
+  reason: string;
   orderId: string;
   currentUserId: string;
   userType: string;

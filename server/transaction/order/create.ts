@@ -22,14 +22,14 @@ export default async (
 
     // convert to model oap
     const oaps = items.map((item) => {
-      const order = new Order();
-      order.id = order.id;
+      const corder = new Order();
+      corder.id = order.id;
       const product = new Product();
       product.id = item.product_id;
 
       const oap = new OrderAndProduct();
-      oap.order = order;
-      oap.orderId = order.id;
+      oap.order = corder;
+      oap.orderId = corder.id;
       oap.product = product;
       oap.productId = product.id;
       oap.quantity = item.quantity;
@@ -44,6 +44,7 @@ export default async (
   } catch (err) {
     await queryRunner.rollbackTransaction();
     console.log("[Error] transaction error when create new order");
+    console.log(err);
     return Error("Error when create new order");
   } finally {
     await queryRunner.release();

@@ -32,7 +32,9 @@ const create = () => {
 
 const updateStatus = () => {
   return [
-    body(["status"]).notEmpty().withMessage("some fields is empty value"),
+    body(["status", "reason"])
+      .notEmpty()
+      .withMessage("some fields is empty value"),
     body("status")
       .isIn(constants.order.status.all)
       .withMessage("invalid status token"),

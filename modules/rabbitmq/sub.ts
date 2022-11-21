@@ -44,6 +44,9 @@ const Subcrises = async () => {
                 case constants.rabbit.newShopEvent:
                   addUser(data, "shop").then();
                   break;
+                case constants.rabbit.newAdminEvent:
+                  addUser(data, "admin").then();
+                  break;
                 case (constants.rabbit.updateAccountEvent,
                 constants.rabbit.newCustomerEvent):
                   addUser(data, null).then();
@@ -66,7 +69,6 @@ const Subcrises = async () => {
 
 const addUser = async (msg: IMessageRabbit, role: string | null) => {
   const newUser = JSON.parse(msg.message) as INewUser;
-  console.log(newUser);
   await services.account.create.addUserFromRabbit(newUser, role);
 };
 

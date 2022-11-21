@@ -43,7 +43,11 @@ const byCustomer = async (
     return Error("Bad request");
 
   if (payload.status == cstOrder.status.cancelled) {
-    const err = await dao.order.update.status(order.id, payload.status);
+    const err = await dao.order.update.status(
+      order.id,
+      payload.status,
+      payload.reason
+    );
     if (err) return err;
   }
 
@@ -74,7 +78,11 @@ const bySeller = async (
     return Error("Bad request");
 
   {
-    const err = await dao.order.update.status(order.id, payload.status);
+    const err = await dao.order.update.status(
+      order.id,
+      payload.status,
+      payload.reason
+    );
     if (err) return err;
   }
 

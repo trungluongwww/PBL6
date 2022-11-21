@@ -57,13 +57,6 @@ export default class Order extends BaseEntity {
   address: string;
 
   @Column({
-    type: "int",
-    name: "from_disctrict_id",
-    nullable: true,
-  })
-  fromDistrictId: number;
-
-  @Column({
     name: "to_name",
     type: "text",
   })
@@ -170,11 +163,11 @@ export default class Order extends BaseEntity {
   status: string;
 
   @Column({
-    name: "search",
+    name: "reason_cancel",
     type: "text",
     default: "",
   })
-  search: string;
+  reasonCancel: string;
 
   @Column({
     name: "is_shop_deleted",

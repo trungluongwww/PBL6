@@ -1,9 +1,11 @@
-import { Account, Order } from "../../../modules/database/entities";
+import { Order } from "../../../modules/database/entities";
 import database from "../../../modules/database";
 
-import { IOrderUpdateStatusPayload } from "../../../interfaces/order";
-
-const status = async (id: string, status: string): Promise<Error | null> => {
+const status = async (
+  id: string,
+  status: string,
+  reason: string
+): Promise<Error | null> => {
   const db = database.getDataSource();
 
   try {
@@ -12,6 +14,7 @@ const status = async (id: string, status: string): Promise<Error | null> => {
       .update(Order)
       .set({
         status: status,
+        reasonCancel: reason,
       })
       .where("id =:id", { id })
       .execute();

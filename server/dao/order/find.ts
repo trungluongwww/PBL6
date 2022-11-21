@@ -1,4 +1,4 @@
-import { Account, Order } from "../../../modules/database/entities";
+import { Order } from "../../../modules/database/entities";
 import database from "../../../modules/database";
 import constants from "../../../constants";
 import { IOrderDetailQuery } from "../../../interfaces/order";
@@ -7,17 +7,23 @@ const detailById = async (
   query: IOrderDetailQuery
 ): Promise<[Order | null, Error | null]> => {
   const db = database.getDataSource();
+
   try {
     const q = db.createQueryBuilder(Order, "o");
+
     q.leftJoinAndMapOne("o.customer", "accounts", "ac", "ac.id = o.customerId");
+
     q.leftJoinAndMapOne("o.shop", "accounts", "as", "as.id = o.shopId");
+
     q.leftJoinAndMapMany(
       "o.items",
       "order_and_products",
       "oap",
       "o.id = oap.orderId"
     );
+
     q.leftJoinAndMapOne("oap.product", "products", "p", "oap.productId = p.id");
+
     q.select([
       "o.createdAt",
       "o.updatedAt",
@@ -51,10 +57,13 @@ const detailById = async (
     if (query.userType == constants.account.role.customer) {
       q.where("o.customerId = :id", { id: query.currentUserId });
     }
+
     if (query.userType == constants.account.role.shop) {
       q.where("o.shopId = :id", { id: query.currentUserId });
     }
+
     q.andWhere("o.id = :orderId", { orderId: query.orderId });
+
     const rs = await q.getOne();
 
     return [rs as Order, null];
@@ -100,7 +109,8 @@ const pageByUser = async (
   skip: number,
   status: string | null,
   currentUserId: string,
-  userType: string
+  userType: string,
+  shopId: string | null
 ): Promise<[Array<Order> | null, Error | null]> => {
   const db = database.getDataSource();
   try {
@@ -119,6 +129,7 @@ const pageByUser = async (
       "o.total",
       "o.createdAt",
       "o.updatedAt",
+      "o.reasonCancel",
       "as.id",
       "as.avatar",
       "as.name",
@@ -140,6 +151,10 @@ const pageByUser = async (
       q.where("o.isShopDeleted = false AND o.shopId = :id", {
         id: currentUserId,
       });
+    }
+
+    if (shopId) {
+      q.where("o.shopId = :shopId", { shopId: shopId });
     }
 
     if (status) {

@@ -12,6 +12,7 @@ const pageByProductId = async (
   try {
     const q = db.createQueryBuilder(Review, "rv");
     q.leftJoinAndMapOne("rv.customer", "accounts", "a", "rv.customerId = a.id");
+
     q.select([
       "a.id",
       "a.name",
@@ -21,6 +22,7 @@ const pageByProductId = async (
       "rv.content",
       "rv.rating",
     ]);
+
     q.where(":productId = ANY(rv.productIds)", { productId });
 
     if (rating) {
@@ -41,7 +43,9 @@ const byOrderId = async (
 
   try {
     const q = db.createQueryBuilder(Review, "rv");
+
     q.where("rv.orderId = :orderId", { orderId: order });
+
     q.select(["rv.id", "rv.updatedAt", "rv.content", "rv.rating"]);
 
     return [await q.getOne(), null];
@@ -73,9 +77,13 @@ const infoReviewByProductId = async (
 
   try {
     const q = db.createQueryBuilder(Review, "rv");
+
     q.where(":productId = ANY(rv.productIds)", { productId });
+
     const count = await q.getCount();
+
     const avg = await q.select("AVG(rv.rating)", "avg").getRawOne();
+
     return [count, avg["avg"]];
   } catch (err: unknown) {
     console.log("Error find review", err);

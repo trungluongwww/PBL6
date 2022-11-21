@@ -5,6 +5,7 @@ const getProvinces = async (): Promise<
   [Array<Province> | null, null | Error]
 > => {
   const db = database.getDataSource();
+
   try {
     const q = db.createQueryBuilder(Province, "p");
     return [await q.select(["p"]).getMany(), null];
@@ -17,6 +18,7 @@ const getDistricts = async (
   proId: number
 ): Promise<[Array<District> | null, null | Error]> => {
   const db = database.getDataSource();
+
   try {
     const q = db.createQueryBuilder(District, "d");
     q.where("d.provinceId = :id", { id: proId });
@@ -30,9 +32,58 @@ const getWards = async (
   disId: number
 ): Promise<[Array<Ward> | null, null | Error]> => {
   const db = database.getDataSource();
+
   try {
     const q = db.createQueryBuilder(Ward, "w");
     q.where("w.districtId = :id", { id: disId });
+    return [await q.select(["w"]).getMany(), null];
+  } catch (err) {
+    return [null, err as Error];
+  }
+};
+
+const getProvinceById = async (
+  id: number
+): Promise<[Array<Province> | null, null | Error]> => {
+  const db = database.getDataSource();
+
+  try {
+    const q = db.createQueryBuilder(Province, "p");
+
+    q.where("p.provinceId = :id", { id });
+
+    return [await q.select(["p"]).getMany(), null];
+  } catch (err) {
+    return [null, err as Error];
+  }
+};
+
+const getDistrictById = async (
+  id: number
+): Promise<[Array<District> | null, null | Error]> => {
+  const db = database.getDataSource();
+
+  try {
+    const q = db.createQueryBuilder(District, "d");
+
+    q.where("d.districtId = :id", { id });
+
+    return [await q.select(["d"]).getMany(), null];
+  } catch (err) {
+    return [null, err as Error];
+  }
+};
+
+const getWardById = async (
+  id: string
+): Promise<[Array<Ward> | null, null | Error]> => {
+  const db = database.getDataSource();
+
+  try {
+    const q = db.createQueryBuilder(Ward, "w");
+
+    q.where("w.wardId = :id", { id });
+
     return [await q.select(["w"]).getMany(), null];
   } catch (err) {
     return [null, err as Error];
@@ -43,4 +94,7 @@ export default {
   getProvinces,
   getDistricts,
   getWards,
+  getProvinceById,
+  getDistrictById,
+  getWardById,
 };

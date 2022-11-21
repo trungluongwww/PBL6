@@ -1,7 +1,8 @@
-import express, { Express, Router } from "express";
+import express, { Express, NextFunction, Response, Router } from "express";
 import controllers from "../controllers";
 import validations from "./validations";
 import required from "./required";
+import { Request } from "express-jwt";
 
 export default (e: Router) => {
   const r = express.Router();

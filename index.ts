@@ -15,15 +15,15 @@ async function init() {
     console.log("server listen on port: ", port);
   });
 
-  const tunnel = await localtunnel({
-    port: 5000,
-    subdomain: "trungluong",
-  });
-
-  console.log(tunnel.url);
-  tunnel.on("close", () => {
-    console.log("close");
-  });
+  // const tunnel = await localtunnel({
+  //   port: 5000,
+  //   subdomain: "trungluong",
+  // });
+  //
+  // console.log(tunnel.url);
+  // tunnel.on("close", () => {
+  //   console.log("close");
+  // });
 }
 
 init().then();

@@ -37,3 +37,18 @@ import { buffer } from "stream/consumers";
 // };
 
 // console.log(JSON.stringify(a));
+const getStartEndOfWeek = (date: Date): [Date, Date] => {
+  date.setDate(date.getDate() - date.getDay() + 1);
+
+  let startDay = new Date(date);
+
+  date.setDate(date.getDate() + 6);
+
+  let endDate = new Date(date);
+
+  return [startDay, endDate];
+};
+
+const a = new Date("2022-11-13 11:00:04.141+00");
+console.log(Date.now());
+console.log(Date.parse(a.toString()));

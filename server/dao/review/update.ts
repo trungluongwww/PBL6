@@ -7,6 +7,7 @@ const byId = async (
   rating: number
 ): Promise<Error | null> => {
   const b = database.getDataSource();
+
   try {
     await b
       .createQueryBuilder()

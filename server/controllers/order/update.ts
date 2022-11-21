@@ -10,6 +10,7 @@ const status = async (req: Request, res: Response) => {
     status: req.body.status,
     currentUserId: req.auth?.id,
     userType: req.auth?.role,
+    reason: req.body.reason,
   } as IOrderUpdateStatusPayload;
   const err = await services.order.update.status(payload);
   if (err) {

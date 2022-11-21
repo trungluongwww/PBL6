@@ -3,11 +3,16 @@ import { IOrderDetailQuery } from "../../../interfaces/order";
 import { Review } from "../../../modules/database/entities";
 import dao from "../../dao";
 import { IReviewCreatePayload } from "../../../interfaces/review";
+import constants from "../../../constants";
 
 export default async (payload: IReviewCreatePayload): Promise<Error | null> => {
   const [order, _] = await dao.order.find.byId(payload.order, payload.userType);
   if (!order) {
     return Error("Order not found");
+  }
+
+  if (order.status != constants.order.status.completed) {
+    return Error("không thể đánh giá lúc này");
   }
 
   if (await checkReviewExist(order.id)) {

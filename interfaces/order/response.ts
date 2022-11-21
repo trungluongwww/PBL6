@@ -1,3 +1,5 @@
+import { Order } from "../../modules/database/entities";
+
 interface IOrderInfo {
   height: number;
   length: number;
@@ -7,4 +9,18 @@ interface IOrderInfo {
   discount: number;
 }
 
-export { IOrderInfo };
+interface IOrderSearchResponse {
+  orders: Array<Order>;
+  numOfPage: number;
+  nextAction: Array<INextActionResponse>;
+}
+
+interface INextActionResponse {
+  id: number;
+  name: string;
+  value: string;
+  isRequireReason: boolean;
+  color: string;
+}
+
+export { IOrderInfo, IOrderSearchResponse, INextActionResponse };

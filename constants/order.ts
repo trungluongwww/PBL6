@@ -19,4 +19,83 @@ export default {
   },
   allowCancel: ["wait_for_confirm", "confirmed"],
   allowDelete: ["wait_for_confirm", "cancelled", "completed"],
+  configAllStatus: [
+    { name: "Đang chờ xác nhận", value: "wait_for_confirm" },
+    { name: "Đã xác nhận", value: "confirmed" },
+    { name: "Đang giao", value: "delivering" },
+    { name: "Hoàn thành", value: "completed" },
+    { name: "Đã hủy", value: "cancelled" },
+  ],
+  configActionStatusShop: {
+    waitForConfirm: [
+      {
+        id: 1,
+        name: "xác nhận",
+        value: "confirmed",
+        isRequireReason: false,
+        color: "#f5f5f5",
+      },
+      {
+        id: 2,
+        name: "hủy đơn",
+        value: "cancelled",
+        isRequireReason: true,
+        color: "#f44336",
+      },
+    ],
+    confirmed: [
+      {
+        id: 1,
+        name: "đang vận chuyển",
+        value: "delivering",
+        isRequireReason: false,
+        color: "#f5f5f5",
+      },
+      {
+        id: 2,
+        name: "hủy đơn",
+        value: "canceled",
+        isRequireReason: true,
+        color: "#f44336",
+      },
+    ],
+    delivering: [
+      {
+        id: 1,
+        name: "hoàn thành",
+        value: "completed",
+        isRequireReason: false,
+        color: "#f5f5f5",
+      },
+    ],
+  },
+  configActionStatusCustomer: {
+    waitForConfirm: [
+      {
+        id: 1,
+        name: "hủy đơn",
+        value: "cancelled",
+        isRequireReason: false,
+        color: "#f5f5f5",
+      },
+    ],
+    confirmed: [
+      {
+        id: 2,
+        name: "hủy đơn",
+        value: "cancelled",
+        isRequireReason: true,
+        color: "#f44336",
+      },
+    ],
+    delivering: [
+      {
+        id: 3,
+        name: "đã nhận hàng",
+        value: "completed",
+        isRequireReason: false,
+        color: "#f5f5f5",
+      },
+    ],
+  },
 };

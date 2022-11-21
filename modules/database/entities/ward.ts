@@ -7,7 +7,7 @@ export default class Ward extends BaseEntity {
     name: "ward_id",
     type: "varchar",
   })
-  wardId: number;
+  wardId: string;
 
   @Column({
     name: "district_id",
