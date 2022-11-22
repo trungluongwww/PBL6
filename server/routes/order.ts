@@ -12,6 +12,8 @@ export default (e: Router) => {
 
   r.get("/", ...validations.order.search, controllers.order.find.pageByUser);
 
+  r.get("/data-center");
+
   r.get("/:id", ...validations.order.getDetail, controllers.order.find.byId);
 
   r.patch(

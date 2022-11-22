@@ -33,7 +33,23 @@ export default {
         name: "xác nhận",
         value: "confirmed",
         isRequireReason: false,
-        color: "#f5f5f5",
+        color: "#43a047",
+      },
+      {
+        id: 2,
+        name: "hủy đơn",
+        value: "cancelled",
+        isRequireReason: true,
+        color: "#e64a19",
+      },
+    ],
+    confirmed: [
+      {
+        id: 1,
+        name: "đang vận chuyển",
+        value: "delivering",
+        isRequireReason: false,
+        color: "#43a047",
       },
       {
         id: 2,
@@ -43,29 +59,13 @@ export default {
         color: "#f44336",
       },
     ],
-    confirmed: [
-      {
-        id: 1,
-        name: "đang vận chuyển",
-        value: "delivering",
-        isRequireReason: false,
-        color: "#f5f5f5",
-      },
-      {
-        id: 2,
-        name: "hủy đơn",
-        value: "canceled",
-        isRequireReason: true,
-        color: "#f44336",
-      },
-    ],
     delivering: [
       {
         id: 1,
-        name: "hoàn thành",
+        name: "đã giao hàng",
         value: "completed",
         isRequireReason: false,
-        color: "#f5f5f5",
+        color: "#43a047",
       },
     ],
   },
@@ -76,7 +76,7 @@ export default {
         name: "hủy đơn",
         value: "cancelled",
         isRequireReason: false,
-        color: "#f5f5f5",
+        color: "#e64a19",
       },
     ],
     confirmed: [
@@ -85,7 +85,7 @@ export default {
         name: "hủy đơn",
         value: "cancelled",
         isRequireReason: true,
-        color: "#f44336",
+        color: "#e64a19",
       },
     ],
     delivering: [
@@ -94,7 +94,7 @@ export default {
         name: "đã nhận hàng",
         value: "completed",
         isRequireReason: false,
-        color: "#f5f5f5",
+        color: "#43a047",
       },
     ],
   },
