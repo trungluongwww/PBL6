@@ -41,8 +41,23 @@ const getStartEndLastDays = (date: Date, n: number): [Date, Date] => {
   return [b, date];
 };
 
+//return [from,to]
+const getTimeStartEndOfDay = (date: Date): [number, number] => {
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
+  let start = Date.parse(date.toString());
+  console.log(date.toString());
+  date.setHours(date.getHours() + 24);
+  let end = Date.parse(date.toString());
+  console.log(date.toString());
+  return [start, end];
+};
+
 export default {
   getStartEndOfMonth,
   getStartEndOfWeek,
   getStartEndLastDays,
+  getTimeStartEndOfDay,
 };
