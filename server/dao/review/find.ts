@@ -91,9 +91,35 @@ const infoReviewByProductId = async (
   }
 };
 
+const byShopId = async (
+  shopId: string,
+  start: number,
+  end: number
+): Promise<[Array<Review> | null, Error | null]> => {
+  const db = database.getDataSource();
+
+  try {
+    const q = db.createQueryBuilder(Review, "rv");
+
+    q.leftJoinAndMapOne("rv.order", "orders", "o", "rv.orderId = o.id");
+
+    q.where("o.shopId = :shopId", { shopId });
+
+    q.andWhere("rv.createdAtNumber BETWEEN :start AND :end", { start, end });
+
+    q.select("rv");
+
+    return [await q.getMany(), null];
+  } catch (err: unknown) {
+    console.log("Error find review", err);
+    return [null, err as Error];
+  }
+};
+
 export default {
   pageByProductId,
   byOrderId,
   byId,
   infoReviewByProductId,
+  byShopId,
 };

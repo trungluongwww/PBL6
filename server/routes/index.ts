@@ -6,6 +6,7 @@ import helmet from "helmet";
 import cors from "cors";
 import order from "./order";
 import common from "./common";
+import dataCenter from "./data-center";
 import response from "../../ultilities/response";
 import review from "./review";
 import voucher from "./voucher";
@@ -69,6 +70,7 @@ export default (app: Express) => {
   order(privateRoute);
   review(privateRoute);
   voucher(privateRoute);
+  dataCenter(privateRoute);
 
   app.use("*", (req: Request, res: Response) => {
     return response.r404(res, "The route not found");

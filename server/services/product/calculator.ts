@@ -19,7 +19,7 @@ const infoOrder = async (
   let err2 = null;
   products?.forEach((product) => {
     if (product.shopId != shopId && shopId != null) {
-      err2 = Error("product no exist in shop");
+      err2 = Error("product không hợp lệ");
     }
     mapProduct.set(product.id, product);
   });

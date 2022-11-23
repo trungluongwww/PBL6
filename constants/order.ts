@@ -75,7 +75,7 @@ export default {
         id: 1,
         name: "hủy đơn",
         value: "cancelled",
-        isRequireReason: false,
+        isRequireReason: true,
         color: "#e64a19",
       },
     ],

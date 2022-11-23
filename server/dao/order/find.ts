@@ -173,8 +173,37 @@ const pageByUser = async (
   }
 };
 
+const byShopId = async (
+  shopId: string,
+  start: number,
+  end: number
+): Promise<[Array<Order> | null, Error | null]> => {
+  const db = database.getDataSource();
+  try {
+    const q = db.createQueryBuilder(Order, "o");
+    q.where("o.shopId = shopId", { shopId });
+    q.where("o.createdAtNumber BETWEEN :start AND :end", { start, end });
+    q.select([
+      "o.id",
+      "o.shopId",
+      "o.customerId",
+      "o.status",
+      "o.total",
+      "o.productIds",
+    ]);
+
+    const rs = await q.getMany();
+
+    return [rs, null];
+  } catch (err: unknown) {
+    console.log("***Error when find order by shop id", err);
+    return [null, err as Error];
+  }
+};
+
 export default {
   detailById,
   pageByUser,
   byId,
+  byShopId,
 };

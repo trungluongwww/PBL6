@@ -8,7 +8,7 @@ import constants from "../../../constants";
 export default async (payload: IReviewCreatePayload): Promise<Error | null> => {
   const [order, _] = await dao.order.find.byId(payload.order, payload.userType);
   if (!order) {
-    return Error("Order not found");
+    return Error("không tìm thấy đơn hàng để đánh giá");
   }
 
   if (order.status != constants.order.status.completed) {

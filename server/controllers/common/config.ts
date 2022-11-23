@@ -8,6 +8,12 @@ const getAllConfigStatusOrder = async (req: Request, res: Response) => {
   return response.r200(res, data);
 };
 
+const getAllConfigOrderDatacenter = async (req: Request, res: Response) => {
+  const data = constants.dataCenter.configs;
+  return response.r200(res, data);
+};
+
 export default {
   getAllConfigStatusOrder,
+  getAllConfigOrderDatacenter,
 };

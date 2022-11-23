@@ -5,6 +5,7 @@ import voucher from "./voucher";
 import account from "./account";
 import review from "./review";
 import address from "./address";
+import dataCenter from "./data-center";
 
 export default {
   account,
@@ -14,4 +15,5 @@ export default {
   voucher,
   review,
   address,
+  dataCenter,
 };
