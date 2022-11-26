@@ -8,7 +8,6 @@ import services from "../../services";
 const getMeDataCenter = async (req: Request, res: Response) => {
   const query = req.body as IOrderDataCenterQuery;
   query.shopId = req.auth?.id;
-  console.log(query);
   const [rs, err] = await services.dataCenter.order.getCommonDatacenter(query);
   if (err) {
     return response.r400(res, null, err.message);

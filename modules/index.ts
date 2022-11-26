@@ -8,6 +8,7 @@ export default {
   initialize: async (e: Express) => {
     const cfg = process.env;
     await database.connect(cfg);
+
     // await redis.init(cfg);
     delivery.init(cfg);
 

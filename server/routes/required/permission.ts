@@ -11,11 +11,11 @@ const permission = function (role: string, require: Array<string> = []) {
     }
 
     if (!(req.auth?.role == role)) {
-      return response.r401(res, "Denied access");
+      return response.r401(res, "bạn không có quyền thực hiện hành động này");
     }
 
     if (!scopes) {
-      return response.r401(res, "Denied access");
+      return response.r401(res, "bạn không có quyền thực hiện hành động này");
     }
 
     let isPermission = true;

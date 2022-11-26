@@ -173,7 +173,7 @@ const pageByUser = async (
   }
 };
 
-const byShopId = async (
+const byShopIdAndTime = async (
   shopId: string,
   start: number,
   end: number
@@ -190,6 +190,7 @@ const byShopId = async (
       "o.status",
       "o.total",
       "o.productIds",
+      "o.createdAt",
     ]);
 
     const rs = await q.getMany();
@@ -205,5 +206,5 @@ export default {
   detailById,
   pageByUser,
   byId,
-  byShopId,
+  byShopIdAndTime,
 };

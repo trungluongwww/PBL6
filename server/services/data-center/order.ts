@@ -4,7 +4,10 @@ import dao from "../../dao";
 import {
   IOrderDataCenterQuery,
   IOrderDataCenterResponse,
+  IOrderDataResponse,
+  IOrderDataChartResponse,
 } from "../../../interfaces/data-center/order";
+import money from "../../../ultilities/strings/money";
 
 const getCommonDatacenter = async (
   query: IOrderDataCenterQuery
@@ -13,6 +16,9 @@ const getCommonDatacenter = async (
   if (!constants.dataCenter.all.includes(query.dataType)) {
     return [null, Error("data type không hợp lệ")];
   }
+
+  let result = [] as Array<IOrderDataResponse>;
+
   const selectedDate = new Date(query.selectedDate);
   const [start, end] = getStartEndTime(
     query.dataType,
@@ -20,7 +26,11 @@ const getCommonDatacenter = async (
     query.numOfLastDays
   );
 
-  let [orders, err1] = await dao.order.find.byShopId(query.shopId, start, end);
+  let [orders, err1] = await dao.order.find.byShopIdAndTime(
+    query.shopId,
+    start,
+    end
+  );
   if (err1 || !orders) {
     return [null, err1];
   }
@@ -38,10 +48,30 @@ const getCommonDatacenter = async (
     can = 0,
     total = 0;
 
+  // data sales chart
+  let dataChart = [] as Array<IOrderDataChartResponse>;
+  let tempDate = orders[0].createdAt.toISOString().split("T")[0];
+  let totalValue = 0;
   orders.forEach((order) => {
+    if (order.createdAt.toISOString().startsWith(tempDate)) {
+      totalValue += order.total;
+    } else {
+      console.log(dataChart);
+      dataChart.push({
+        name: tempDate,
+        value: totalValue,
+      });
+      totalValue = order.total;
+      tempDate = order.createdAt.toISOString().split("T")[0];
+    }
+
     if (order.status == constants.order.status.completed) com += 1;
     if (order.status == constants.order.status.cancelled) can += 1;
     total += order.total;
+  });
+  dataChart.push({
+    name: tempDate,
+    value: totalValue,
   });
 
   let totalRating = 0;
@@ -49,17 +79,43 @@ const getCommonDatacenter = async (
     totalRating += rv.rating;
   });
 
-  return [
-    {
-      numOfOrder: orders.length,
-      numOfCancelledOrder: can,
-      numOfCompletedOrder: com,
-      numOfReview: reviews.length,
-      avegageRating: totalRating / reviews.length,
-      sales: total,
-    } as IOrderDataCenterResponse,
-    null,
-  ];
+  appendResult(result, "tổng số đơn hàng", orders.length.toString());
+  appendResult(result, "số đơn hủy", can.toString());
+  appendResult(result, "số đơn hoàn thành", com.toString());
+  appendResult(result, "số lượt đánh giá", reviews.length.toString());
+  appendResult(
+    result,
+    "trung bình điểm đánh giá",
+    (totalRating / reviews.length).toString()
+  );
+  appendResult(result, "doanh số bán hàng", money.convertToMoneyString(total));
+  appendResult(
+    result,
+    "tỉ lệ hủy đơn",
+    ((can / orders.length) * 100).toString() + " %"
+  );
+
+  const response = {
+    charts: dataChart,
+    data: result,
+    fromDate: new Date(start),
+    toDate: new Date(end),
+  } as IOrderDataCenterResponse;
+
+  return [response, null];
+};
+
+const appendResult = (
+  arr: Array<IOrderDataResponse>,
+  name: string,
+  value: string,
+  info: string = ""
+) => {
+  arr.push({
+    info: info,
+    name: name,
+    value: value,
+  });
 };
 
 const getStartEndTime = (

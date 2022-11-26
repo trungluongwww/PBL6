@@ -6,12 +6,26 @@ interface IOrderDataCenterQuery {
 }
 
 interface IOrderDataCenterResponse {
-  numOfOrder: number;
-  numOfCompletedOrder: number;
-  numOfCancelledOrder: number;
-  numOfReview: number;
-  avegageRating: number;
-  sales: number;
+  data: Array<IOrderDataResponse>;
+  charts: Array<IOrderDataChartResponse>;
+  fromDate: Date;
+  toDate: Date;
 }
 
-export { IOrderDataCenterResponse, IOrderDataCenterQuery };
+interface IOrderDataChartResponse {
+  name: string;
+  value: number;
+}
+
+interface IOrderDataResponse {
+  name: string;
+  info: string;
+  value: string;
+}
+
+export {
+  IOrderDataCenterResponse,
+  IOrderDataCenterQuery,
+  IOrderDataResponse,
+  IOrderDataChartResponse,
+};

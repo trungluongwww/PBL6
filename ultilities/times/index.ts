@@ -18,10 +18,7 @@ function daysInMonth(month: number, year: number) {
 // return [from,to]
 const getStartEndOfMonth = (date: Date): [Date, Date] => {
   date.setDate(date.getDate() - date.getDate() + 1);
-  date.setUTCHours(0);
-  date.setUTCMinutes(0);
-  date.setUTCSeconds(0);
-  date.setUTCMilliseconds(0);
+  date.setUTCHours(0, 0, 0, 0);
   let startDay = new Date(date);
 
   date.setDate(
@@ -43,10 +40,7 @@ const getStartEndLastDays = (date: Date, n: number): [Date, Date] => {
 
 //return [from,to]
 const getTimeStartEndOfDay = (date: Date): [Date, Date] => {
-  date.setHours(0);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setMilliseconds(0);
+  date.setHours(0, 0, 0, 0);
   let start = new Date(date.toString());
   date.setHours(date.getHours() + 24);
   let end = new Date(date.toString());
