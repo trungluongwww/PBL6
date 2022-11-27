@@ -1,7 +1,6 @@
 import dao from "../../dao";
 import { Review } from "../../../modules/database/entities";
 import { IReviewQuery } from "../../../interfaces/review";
-import database from "../../../modules/database";
 
 interface IReviewResponse {
   reviews: Review[];
@@ -18,27 +17,29 @@ const pageByProductId = async (
   let skip = query.page >= 1 ? (Math.round(query.page) - 1) * query.limit : 0;
   let rating =
     query.rating >= 1 && query.rating <= 5 ? Math.round(query.rating) : 0;
-  const [reviews, err] = await dao.review.find.pageByProductId(
+  const [reviews, count, err] = await dao.review.find.pageByProductId(
     query.product,
     limit,
     skip,
     rating
   );
 
-  const [count, avg] = await dao.review.find.infoReviewByProductId(
-    query.product
-  );
-
   if (err) {
     return [null, Error("Common somethong error")];
   }
+
+  let totalRating = 0;
+  reviews.forEach((review) => {
+    totalRating += review.rating;
+  });
+
   return [
     {
       numOfPage: Math.floor(count / limit) + 1,
       limit: limit,
       page: query.page,
       reviews: reviews,
-      totalRating: avg,
+      totalRating: totalRating / reviews.length,
     },
     null,
   ];

@@ -12,6 +12,8 @@ const pageByClientId = async (
   query: IOrderQuerySearchByUser
 ): Promise<[any | null, Error | null]> => {
   query.limit = query.limit >= 1 ? Math.round(query.limit) : 10;
+  query.page = Math.round(query.page);
+
   let shopId = "";
   if (query.shopId && query.shopId != "") {
     const [account, err] = await services.account.find.byId(query.shopId);
@@ -24,7 +26,7 @@ const pageByClientId = async (
     shopId = query.shopId;
   }
 
-  let skip = query.page >= 1 ? (Math.round(query.page) - 1) * query.limit : 0;
+  let skip = query.page >= 1 ? (query.page - 1) * query.limit : 0;
 
   if (query.status) {
     if (!constants.order.status.all.includes(query.status)) {
@@ -34,7 +36,7 @@ const pageByClientId = async (
     query.status = null;
   }
 
-  const [orders, err] = await dao.order.find.pageByUser(
+  const [orders, count, err] = await dao.order.find.pageByUser(
     query.limit,
     skip,
     query.status,
@@ -51,10 +53,13 @@ const pageByClientId = async (
     orders: [],
     numOfPage: 1,
     nextAction: [],
+    page: query.page,
+    limit: query.limit,
   };
+
   if (orders) {
     response.orders = orders;
-    response.numOfPage = Math.floor(orders.length / query.limit) + 1;
+    response.numOfPage = Math.floor(count / query.limit) + 1;
     response.nextAction = getNextAction(
       query.userType,
       query.status

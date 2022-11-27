@@ -6,7 +6,7 @@ const pageByProductId = async (
   limit: number,
   skip: number,
   rating: number
-): Promise<[Array<Review>, Error | null]> => {
+): Promise<[Array<Review>, number, Error | null]> => {
   const db = database.getDataSource();
 
   try {
@@ -29,10 +29,12 @@ const pageByProductId = async (
       q.andWhere("rv.rating = :rating", { rating });
     }
 
-    return [await q.take(limit).skip(skip).getMany(), null];
+    const count = await q.getCount();
+
+    return [await q.take(limit).skip(skip).getMany(), count, null];
   } catch (err: unknown) {
     console.log("Error find review", err);
-    return [[], err as Error];
+    return [[], 1, err as Error];
   }
 };
 

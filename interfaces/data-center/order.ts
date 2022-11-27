@@ -7,12 +7,17 @@ interface IOrderDataCenterQuery {
 
 interface IOrderDataCenterResponse {
   data: Array<IOrderDataResponse>;
-  charts: Array<IOrderDataChartResponse>;
+  charts: IChartResponse;
   fromDate: Date;
   toDate: Date;
 }
 
-interface IOrderDataChartResponse {
+interface IChartResponse {
+  name: string;
+  data: Array<IDataChartResponse>;
+}
+
+interface IDataChartResponse {
   name: string;
   value: number;
 }
@@ -27,5 +32,6 @@ export {
   IOrderDataCenterResponse,
   IOrderDataCenterQuery,
   IOrderDataResponse,
-  IOrderDataChartResponse,
+  IDataChartResponse,
+  IChartResponse,
 };

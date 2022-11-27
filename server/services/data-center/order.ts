@@ -5,7 +5,8 @@ import {
   IOrderDataCenterQuery,
   IOrderDataCenterResponse,
   IOrderDataResponse,
-  IOrderDataChartResponse,
+  IChartResponse,
+  IDataChartResponse,
 } from "../../../interfaces/data-center/order";
 import money from "../../../ultilities/strings/money";
 
@@ -49,14 +50,13 @@ const getCommonDatacenter = async (
     total = 0;
 
   // data sales chart
-  let dataChart = [] as Array<IOrderDataChartResponse>;
+  let dataChart = [] as Array<IDataChartResponse>;
   let tempDate = orders[0].createdAt.toISOString().split("T")[0];
   let totalValue = 0;
   orders.forEach((order) => {
     if (order.createdAt.toISOString().startsWith(tempDate)) {
       totalValue += order.total;
     } else {
-      console.log(dataChart);
       dataChart.push({
         name: tempDate,
         value: totalValue,
@@ -86,7 +86,7 @@ const getCommonDatacenter = async (
   appendResult(
     result,
     "trung bình điểm đánh giá",
-    (totalRating / reviews.length).toString()
+    (totalRating / reviews.length).toString() + "⭐"
   );
   appendResult(result, "doanh số bán hàng", money.convertToMoneyString(total));
   appendResult(
@@ -96,7 +96,10 @@ const getCommonDatacenter = async (
   );
 
   const response = {
-    charts: dataChart,
+    charts: {
+      name: "Biểu đồ doanh số bán hàng",
+      data: dataChart,
+    },
     data: result,
     fromDate: new Date(start),
     toDate: new Date(end),

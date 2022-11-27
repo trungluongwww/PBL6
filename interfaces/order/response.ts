@@ -12,6 +12,8 @@ interface IOrderInfo {
 interface IOrderSearchResponse {
   orders: Array<Order>;
   numOfPage: number;
+  page: number;
+  limit: number;
   nextAction: Array<INextActionResponse>;
 }
 

@@ -38,3 +38,9 @@ import { start } from "repl";
 // };
 
 // console.log(JSON.stringify(a));
+
+console.log(Date.parse("2022-11-12 14:19:21.977+00"));
+console.log(Date.parse("2022-11-13 11:00:04.141+00"));
+console.log(Date.parse("2022-11-14 14:18:40.321+00"));
+console.log(Date.parse("2022-11-15 14:17:11.019+00"));
+console.log(Date.parse("2022-11-16 09:34:56.517+00"));

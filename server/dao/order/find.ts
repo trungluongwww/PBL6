@@ -111,7 +111,7 @@ const pageByUser = async (
   currentUserId: string,
   userType: string,
   shopId: string | null
-): Promise<[Array<Order> | null, Error | null]> => {
+): Promise<[Array<Order> | null, number, Error | null]> => {
   const db = database.getDataSource();
   try {
     const q = db.createQueryBuilder(Order, "o");
@@ -160,16 +160,19 @@ const pageByUser = async (
     if (status) {
       q.andWhere("o.status = :status", { status });
     }
+
+    const count = await q.getCount();
+
     const rs = await q
-      .orderBy("o.updatedAt", "DESC")
+      .orderBy("o.updatedAt", "ASC")
       .skip(skip)
       .take(limit)
       .getMany();
 
-    return [rs, null];
+    return [rs, count, null];
   } catch (err) {
     console.log("*** Error when load order page");
-    return [null, err as Error];
+    return [null, 1, err as Error];
   }
 };
 
@@ -193,7 +196,7 @@ const byShopIdAndTime = async (
       "o.createdAt",
     ]);
 
-    const rs = await q.getMany();
+    const rs = await q.orderBy("o.createdAt", "ASC").getMany();
 
     return [rs, null];
   } catch (err: unknown) {
