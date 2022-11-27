@@ -5,7 +5,7 @@ import constants from "../../../constants";
 
 const permission = function (role: string, require: Array<string> = []) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const scopes = (req.auth?.scopes.split(",") as Array<string>) || null;
+    const scopes = (req.auth?.scopes?.split(",") as Array<string>) || null;
     if (req.auth?.role == constants.account.role.admin) {
       return next();
     }

@@ -2,8 +2,6 @@ import rabbitmq from "./index";
 import { IMessageRabbit, INewUser } from "../../interfaces/rabbit";
 import constants from "../../constants";
 import services from "../../server/services";
-import { flatMap } from "lodash";
-import { newCustomerEvent } from "../../constants/rabbit";
 import { admin } from "../../constants/permission";
 import { IProductCreate } from "../../interfaces/product";
 

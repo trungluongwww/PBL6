@@ -1,6 +1,8 @@
 // return [from,to]
 const getStartEndOfWeek = (date: Date): [Date, Date] => {
-  date.setDate(date.getDate() - date.getDay() + 1);
+  console.log(date)
+  date.setDate(date.getDate() - date.getDay());
+  date.setUTCHours(0, 0, 0, 0);
 
   let startDay = new Date(date);
 
@@ -8,6 +10,7 @@ const getStartEndOfWeek = (date: Date): [Date, Date] => {
 
   let endDate = new Date(date);
 
+  console.log(startDay,endDate)
   return [startDay, endDate];
 };
 
@@ -25,6 +28,7 @@ const getStartEndOfMonth = (date: Date): [Date, Date] => {
     date.getDate() + daysInMonth(date.getMonth(), date.getFullYear()) - 1
   );
 
+  date.setUTCHours(23, 59, 59, 0);
   let endDate = new Date(date);
 
   return [startDay, endDate];

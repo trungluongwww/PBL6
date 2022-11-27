@@ -112,6 +112,7 @@ const pageByUser = async (
   userType: string,
   shopId: string | null
 ): Promise<[Array<Order> | null, number, Error | null]> => {
+  console.log(limit,skip,status,currentUserId,userType,shopId)
   const db = database.getDataSource();
   try {
     const q = db.createQueryBuilder(Order, "o");
@@ -153,7 +154,7 @@ const pageByUser = async (
       });
     }
 
-    if (shopId) {
+    if (shopId&&shopId!="") {
       q.where("o.shopId = :shopId", { shopId: shopId });
     }
 

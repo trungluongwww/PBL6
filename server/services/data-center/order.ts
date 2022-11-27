@@ -32,7 +32,7 @@ const getCommonDatacenter = async (
     start,
     end
   );
-  if (err1 || !orders) {
+  if (err1 || !orders ) {
     return [null, err1];
   }
 
@@ -49,36 +49,49 @@ const getCommonDatacenter = async (
     can = 0,
     total = 0;
 
+
   // data sales chart
   let dataChart = [] as Array<IDataChartResponse>;
-  let tempDate = orders[0].createdAt.toISOString().split("T")[0];
-  let totalValue = 0;
-  orders.forEach((order) => {
-    if (order.createdAt.toISOString().startsWith(tempDate)) {
-      totalValue += order.total;
-    } else {
-      dataChart.push({
-        name: tempDate,
-        value: totalValue,
-      });
-      totalValue = order.total;
-      tempDate = order.createdAt.toISOString().split("T")[0];
-    }
 
-    if (order.status == constants.order.status.completed) com += 1;
-    if (order.status == constants.order.status.cancelled) can += 1;
-    total += order.total;
-  });
-  dataChart.push({
-    name: tempDate,
-    value: totalValue,
-  });
+  if(orders.length){
+    let tempDate = orders[0].createdAt.toISOString().split("T")[0];
+    let totalValue = 0;
+    orders.forEach((order) => {
+      if (order.createdAt.toISOString().startsWith(tempDate)) {
+        totalValue += order.total;
+      } else {
+        dataChart.push({
+          name: tempDate,
+          value: totalValue,
+        });
+        totalValue = order.total;
+        tempDate = order.createdAt.toISOString().split("T")[0];
+      }
+
+      if (order.status == constants.order.status.completed) com += 1;
+      if (order.status == constants.order.status.cancelled) can += 1;
+      total += order.total;
+    });
+    dataChart.push({
+      name: tempDate,
+      value: totalValue,
+    });
+  }
+
+
 
   let totalRating = 0;
-  reviews.forEach((rv) => {
-    totalRating += rv.rating;
-  });
 
+  if(reviews.length){
+    reviews.forEach((rv) => {
+      totalRating += rv.rating;
+    });
+    totalRating = (totalRating / reviews.length)
+  }
+
+  let percentCancel = (Math.round((can / orders.length) * 10000)/100) || 0
+
+  appendResult(result, "doanh số bán hàng", money.convertToMoneyString(total));
   appendResult(result, "tổng số đơn hàng", orders.length.toString());
   appendResult(result, "số đơn hủy", can.toString());
   appendResult(result, "số đơn hoàn thành", com.toString());
@@ -86,13 +99,12 @@ const getCommonDatacenter = async (
   appendResult(
     result,
     "trung bình điểm đánh giá",
-    (totalRating / reviews.length).toString() + "⭐"
+    totalRating.toString() + "⭐"
   );
-  appendResult(result, "doanh số bán hàng", money.convertToMoneyString(total));
   appendResult(
     result,
     "tỉ lệ hủy đơn",
-    ((can / orders.length) * 100).toString() + " %"
+      percentCancel.toString() + " %"
   );
 
   const response = {
@@ -127,12 +139,13 @@ const getStartEndTime = (
   n: number
 ): [number, number] => {
   let start: Date, end: Date;
+
   switch (dataType) {
     case constants.dataCenter.typeData.last7Days:
-      [start, end] = times.getStartEndLastDays(date, 7);
+      [start, end] = times.getStartEndLastDays(new Date(), 7);
       break;
     case constants.dataCenter.typeData.last30Days:
-      [start, end] = times.getStartEndLastDays(date, 30);
+      [start, end] = times.getStartEndLastDays(new Date(), 30);
       break;
     case constants.dataCenter.typeData.byWeek:
       [start, end] = times.getStartEndOfWeek(date);
@@ -141,7 +154,7 @@ const getStartEndTime = (
       [start, end] = times.getStartEndOfMonth(date);
       break;
     default:
-      [start, end] = times.getTimeStartEndOfDay(date);
+      [start, end] = times.getTimeStartEndOfDay(new Date());
       break;
   }
 

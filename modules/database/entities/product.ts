@@ -58,7 +58,6 @@ export default class Product extends BaseEntity {
   @Column({
     name: "avatar",
     type: "varchar",
-    nullable: false,
   })
   avatar: string;
 

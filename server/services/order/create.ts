@@ -62,8 +62,7 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
     }
     if (voucher.discountPercent) {
       order.voucherDiscount =
-        ((order.totalPrice - order.productDiscount) * voucher.discountPercent) /
-        100;
+        (order.totalPrice - order.productDiscount) * voucher.discountPercent;
     } else {
       order.voucherDiscount = voucher.discountValue;
     }
