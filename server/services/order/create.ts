@@ -41,11 +41,11 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
   order.customerId = payload.customerId;
   order.shopId = payload.shopId;
   order.address = payload.address;
-  order.toName = payload.toName;
-  order.toPhone = payload.toPhone;
-  order.toStreet = payload.toStreet;
-  order.toWardCode = payload.toWardCode;
-  order.toDistrictId = payload.toDistrictId;
+  order.toName = customer.name;
+  order.toPhone = customer.phone;
+  order.toStreet = customer.address;
+  order.toWardCode = customer.wardCode;
+  order.toDistrictId = customer.districtId;
   order.serviceId = payload.serviceId;
   order.voucherId = payload.voucherId;
   order.productIds = productIds;
@@ -73,8 +73,8 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
       {
         items: payload.items,
         service_id: payload.serviceId,
-        to_ward_code: payload.toWardCode,
-        to_district_id: payload.toDistrictId,
+        to_ward_code: customer.wardCode,
+        to_district_id: customer.districtId,
         from_district_id: shop.districtId,
       },
       orderInfo

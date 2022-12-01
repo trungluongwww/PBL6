@@ -81,12 +81,15 @@ const getCommonDatacenter = async (
 
 
   let totalRating = 0;
-
+  let countRating = 0;
   if(reviews.length){
     reviews.forEach((rv) => {
-      totalRating += rv.rating;
+      if(rv.rating){
+        totalRating += rv.rating;
+        countRating++;
+      }
     });
-    totalRating = (totalRating / reviews.length)
+    totalRating = Math.round((totalRating / countRating)*100)/100
   }
 
   let percentCancel = (Math.round((can / orders.length) * 10000)/100) || 0
@@ -95,11 +98,11 @@ const getCommonDatacenter = async (
   appendResult(result, "tổng số đơn hàng", orders.length.toString());
   appendResult(result, "số đơn hủy", can.toString());
   appendResult(result, "số đơn hoàn thành", com.toString());
-  appendResult(result, "số lượt đánh giá", reviews.length.toString());
+  appendResult(result, "số đánh giá", countRating.toString()+" lượt");
   appendResult(
     result,
     "trung bình điểm đánh giá",
-    totalRating.toString() + "⭐"
+    totalRating.toString() + " ⭐"
   );
   appendResult(
     result,

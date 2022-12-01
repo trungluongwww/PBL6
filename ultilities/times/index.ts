@@ -1,6 +1,5 @@
 // return [from,to]
 const getStartEndOfWeek = (date: Date): [Date, Date] => {
-  console.log(date)
   date.setDate(date.getDate() - date.getDay());
   date.setUTCHours(0, 0, 0, 0);
 
@@ -10,7 +9,6 @@ const getStartEndOfWeek = (date: Date): [Date, Date] => {
 
   let endDate = new Date(date);
 
-  console.log(startDay,endDate)
   return [startDay, endDate];
 };
 

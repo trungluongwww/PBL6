@@ -1,6 +1,6 @@
 interface IOrderDataCenterQuery {
   dataType: string;
-  selectedDate: string;
+  selectedDate: Date;
   shopId: string;
   numOfLastDays: number;
 }
