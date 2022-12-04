@@ -12,6 +12,15 @@ interface IOrderCreatePayload {
   items: Array<IOrderItemPayload>;
 }
 
+interface IOrderCalculatePayload {
+  header:string | Array<string>
+  customerId: string;
+  shopId: string;
+  serviceId: number;
+  voucherId: string;
+  items: Array<IOrderItemPayload>;
+}
+
 interface IOrderItemPayload {
   product_id: string;
   quantity: number;
@@ -53,4 +62,5 @@ export {
   IOrderDetailQuery,
   IOrderUpdateStatusPayload,
   IOrderDeletePayload,
+  IOrderCalculatePayload
 };

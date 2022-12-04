@@ -9,6 +9,8 @@ export default (e: Router) => {
 
   r.post("/", ...validations.order.create, controllers.order.create);
 
+  r.post("/create-payment", ...validations.order.calculate, controllers.order.find.createPayment);
+
   r.get("/", ...validations.order.search, controllers.order.find.pageByUser);
 
   r.get("/:id", ...validations.order.getDetail, controllers.order.find.byId);

@@ -86,18 +86,6 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
     order.deliveryFee = feeData?.total || 0;
   }
 
-  // err = await dao.order.create(order);
-  // if (err) {
-  //   return err;
-  // }
-  //
-  // err = await services.orderAndProduct.create.many(order.id, payload.items);
-  // if (err) {
-  //   dao.order.del.byAdmin(order.id).then();
-  //   services.orderAndProduct.del.manyByOrderId(order.id).then();
-  //   return err;
-  // }
-
   err = await transaction.order.create(order, payload.items);
 
   if (err) {

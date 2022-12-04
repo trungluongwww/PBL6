@@ -1,6 +1,8 @@
 import express, { Express, Router } from "express";
+import querystring from "qs";
+import crypto from "crypto";
+import dateFormat from 'dateformat'
 import common from "../controllers/common";
-
 export default (r: Router) => {
   r.get("/provinces", common.masterData.getProvinces);
   r.get("/wards/:id", common.masterData.getWards);
@@ -9,4 +11,6 @@ export default (r: Router) => {
   r.get("/config-order/data-center", common.config.getAllConfigOrderDatacenter);
   r.post("/fee", common.shippingOrder.getPreviewFee);
   r.post("/services", common.shippingOrder.getServices);
+
 };
+

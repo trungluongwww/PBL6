@@ -14,7 +14,6 @@ const validById = async (
     q.andWhere("v.quantity > 0");
 
     const rs = await q.getOne();
-    console.log(rs);
     return [rs, null];
   } catch (err: unknown) {
     console.log("*** Error when get voucher", err);
@@ -30,7 +29,7 @@ const validByCode = async (
   try {
     const q = db.createQueryBuilder(Voucher, "v");
     q.select(["v.id"]);
-    q.where("v.code = :code", { code });
+    q.where("v.code = :code", { code:code });
 
     const rs = await q.getOne();
 
@@ -54,6 +53,7 @@ const active = async (): Promise<[Array<Voucher>, Error | null]> => {
       "v.discountPercent",
       "v.discountValue",
       "v.quantity",
+        "v.isActive"
     ]);
     q.where("v.isActive = :status", { status: true });
 

@@ -23,7 +23,6 @@ export default (app: Express) => {
 
   app.get("/tokens/:id", async (req, res) => {
     const [payload, err] = await services.account.find.byId(req.params.id);
-    console.log(payload);
     const token = jwt.sign(
       {
         ...payload,

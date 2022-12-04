@@ -95,7 +95,6 @@ const checkUpdateStatusAllowed = (
   oldStatus: string,
   status: string
 ): boolean => {
-  console.log(oldStatus, status);
   if (
     status == cstOrder.status.cancelled &&
     strings.array.include(cstOrder.allowCancel, oldStatus)

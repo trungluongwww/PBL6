@@ -6,8 +6,9 @@ const byId = async (payload: IVoucherUpdatePayload): Promise<Error | null> => {
   if (!voucher) {
     return Error("không tìm thấy voucher này");
   }
-  const existCode = await dao.voucher.find.validByCode(payload.code);
-  if (existCode) {
+  const [existCode,err1] = await dao.voucher.find.validByCode(payload.code);
+  console.log(voucher.code,payload.code)
+  if (existCode && (voucher.code != payload.code)) {
     return Error("code voucher đã tồn lại ");
   }
 

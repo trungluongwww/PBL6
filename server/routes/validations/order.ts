@@ -16,16 +16,23 @@ const create = () => {
   return [
     body([
       "address",
-      "toName",
-      "toPhone",
-      "toStreet",
-      "toWardCode",
-      "toDistrictId",
       "serviceId",
       "voucherId",
     ])
       .notEmpty()
       .withMessage("some fields is empty value"),
+    bodyId("shopId"),
+  ];
+};
+
+const calculate = () => {
+  return [
+    body([
+      "serviceId",
+      "voucherId",
+    ])
+        .notEmpty()
+        .withMessage("some fields is empty value"),
     bodyId("shopId"),
   ];
 };
@@ -43,6 +50,7 @@ export default {
   search: [search(), checkErrors],
   getDetail: [paramId(), checkErrors],
   create: [create(), checkErrors],
+  calculate:[calculate(),checkErrors],
   updateStatus: [updateStatus(), paramId(), checkErrors],
   delete: [paramId(), checkErrors],
 };

@@ -1,5 +1,5 @@
 import {
-  INextActionResponse,
+  INextActionResponse, IOrderCalculatePayload, IOrderCreatePayload,
   IOrderDetailQuery,
   IOrderQuerySearchByUser,
   IOrderSearchResponse,
@@ -7,6 +7,7 @@ import {
 import constants from "../../../constants";
 import dao from "../../dao";
 import services from "../index";
+import delivery from "../../../modules/delivery";
 
 const pageByClientId = async (
   query: IOrderQuerySearchByUser
@@ -20,8 +21,8 @@ const pageByClientId = async (
     if (err || !account) {
       return [null, Error("shop không tồn tại")];
     }
-    if (account.role != constants.account.role.shop) {
-      return [null, Error("account không phải shop")];
+    if (account.role != constants.account.role.admin) {
+      return [null, Error("account không phải admin")];
     }
     shopId = query.shopId;
   }
