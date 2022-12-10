@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sentry/node": "^7.23.0",
+    "@sentry/tracing": "^7.23.0",
+    "@serverless/cloud": "^2.11.6",
     "amqplib": "^0.10.3",
     "cors": "^2.8.5",
     "dateformat": "^2.2.0",

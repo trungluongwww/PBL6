@@ -7,9 +7,10 @@ export default (e: Router) => {
   const r = express.Router();
   e.use("/orders", required.login, r);
 
-  r.post("/", ...validations.order.create, controllers.order.create);
+  r.post("/", ...validations.order.create, controllers.order.create.one);
 
-  r.post("/create-payment", ...validations.order.calculate, controllers.order.find.createPayment);
+  r.post("/create-payment", ...validations.order.create, controllers.order.create.payment);
+  r.post("/payment-online",controllers.order.create.payment);
 
   r.get("/", ...validations.order.search, controllers.order.find.pageByUser);
 

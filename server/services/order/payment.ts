@@ -1,15 +1,19 @@
-import {IOrderCalculatePayload} from "../../../interfaces/order";
+import {IOrderCalculatePayload, IOrderCreatePayload} from "../../../interfaces/order";
 import services from "../index";
 import delivery from "../../../modules/delivery";
 import dateFormat from "dateformat";
 import querystring from "qs";
 import crypto from "crypto";
+import redis from "../../../modules/redis";
+import {v4} from "uuid";
 
 interface IOrderCreatePayment {
     url: string
 }
 
-const createPayment  = async (payload: IOrderCalculatePayload):Promise<[IOrderCreatePayment|null,Error|null]>=>{
+const createPayment  = async (payload: IOrderCreatePayload):Promise<[IOrderCreatePayment|null,Error|null]>=>{
+    const orderId = v4()
+
     const [customer, e] = await services.account.find.byId(payload.customerId);
 
     if (e || !customer) {
@@ -77,19 +81,23 @@ const createPayment  = async (payload: IOrderCalculatePayload):Promise<[IOrderCr
 
 
     const rs = {
-        url:getPaymentURL(total,payload.header)
+        url:getPaymentURL(total,orderId)
     } as IOrderCreatePayment
 
+    // cache
+    const strData = JSON.stringify(payload)
+    const key = redis.key.payment(orderId)
+    await redis.set.keyValueWithTTL(key,strData,3600)
+    console.log(orderId)
     return [rs,null]
 }
 
-const getPaymentURL = (total:number,header:string|Array<string>):string=>{
+const getPaymentURL = (total:number,orderId:string):string=>{
     let vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     let returnUrl = "http://localhost:3000";
 
     let date = new Date();
     let createDate = dateFormat(date, "yyyymmddHHmmss");
-    let orderId = dateFormat(date, "HHmmss");
     let vnp_Params : any = {};
     vnp_Params["vnp_Version"] = "2.1.0";
     vnp_Params["vnp_Command"] = "pay";
