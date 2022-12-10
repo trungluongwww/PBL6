@@ -94,7 +94,7 @@ const createPayment  = async (payload: IOrderCreatePayload):Promise<[IOrderCreat
 
 const getPaymentURL = (total:number,orderId:string):string=>{
     let vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    let returnUrl = "http://localhost:3000";
+    let returnUrl = "http://localhost:3000/order/payment-response";
 
     let date = new Date();
     let createDate = dateFormat(date, "yyyymmddHHmmss");
