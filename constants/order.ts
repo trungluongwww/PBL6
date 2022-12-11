@@ -1,4 +1,14 @@
 export default {
+  paymentMethod:{
+    all:[
+        'COD',
+        'ONLINE',
+    ],
+    cod:'COD',
+    online:'ONLINE',
+    codName:"thánh toán khi nhận hàng",
+    onlineName:"thanh toán bằng vnpay",
+  },
   status: {
     all: [
       "wait_for_confirm",

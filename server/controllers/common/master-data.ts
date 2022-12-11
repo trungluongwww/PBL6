@@ -1,6 +1,5 @@
 import { Response } from "express";
 import { Request } from "express-jwt";
-import delivery from "../../../modules/delivery";
 import response from "../../../ultilities/response";
 import services from "../../services";
 

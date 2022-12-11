@@ -3,6 +3,8 @@ import { Express } from "express";
 import delivery from "./delivery";
 import rabbitmq from "./rabbitmq";
 import email from "./email";
+import sentry from "./sentry";
+import redis from "./redis";
 
 export default {
   initialize: async (e: Express) => {
@@ -17,5 +19,11 @@ export default {
 
     // rabbit
     rabbitmq.connect();
+
+    // redis
+    await redis.init(cfg)
+
+    sentry(e)
+
   },
 };

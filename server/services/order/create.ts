@@ -5,7 +5,6 @@ import {
 import { Order } from "../../../modules/database/entities";
 import services from "../index";
 import constants from "../../../constants";
-import dao from "../../dao";
 import delivery from "../../../modules/delivery";
 import rabbitmq from "../../../modules/rabbitmq";
 import email from "../../../modules/email";
@@ -52,6 +51,8 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
   order.totalPrice = orderInfo.insurance_value;
   order.productDiscount = orderInfo.discount;
   order.status = constants.order.status.waitForConfirm;
+  order.paymentMethod = constants.order.paymentMethod.cod;
+  order.paymentName = constants.order.paymentMethod.codName;
 
   if (payload.voucherId) {
     const [voucher, _] = await services.voucher.find.validById(
@@ -102,3 +103,7 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
 const publicChangeProductQuantity = async (items: Array<IOrderItemPayload>) => {
   rabbitmq.pub.Public(constants.rabbit.decreaseQuantityProductEvent, items);
 };
+
+export {
+  publicChangeProductQuantity,
+}

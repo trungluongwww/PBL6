@@ -163,6 +163,21 @@ export default class Order extends BaseEntity {
   status: string;
 
   @Column({
+    name:"payment_method",
+    type:"enum",
+    enum:constants.order.paymentMethod.all,
+    default:constants.order.paymentMethod.cod
+  })
+  paymentMethod:string
+
+  @Column({
+    name:"payment_name",
+    type:"text",
+    default:constants.order.paymentMethod.codName
+  })
+  paymentName:string
+
+  @Column({
     name: "reason_cancel",
     type: "text",
     default: "",

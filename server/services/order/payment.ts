@@ -1,19 +1,60 @@
-import {IOrderCalculatePayload} from "../../../interfaces/order";
+import {
+    IOrderCalculatePayload,
+    IOrderCreatePayload,
+    IOrderItemPayload,
+    IPaymentOnlinePayload
+} from "../../../interfaces/order";
 import services from "../index";
 import delivery from "../../../modules/delivery";
 import dateFormat from "dateformat";
 import querystring from "qs";
 import crypto from "crypto";
+import redis from "../../../modules/redis";
+import util from "../../../ultilities/strings"
+import {Order} from "../../../modules/database/entities";
+import constants from "../../../constants";
+import queryString from 'qs'
+import {data} from "@serverless/cloud";
+import transaction from "../../transaction";
+import email from "../../../modules/email";
 
 interface IOrderCreatePayment {
-    url: string
+    url: string|null
 }
 
-const createPayment  = async (payload: IOrderCalculatePayload):Promise<[IOrderCreatePayment|null,Error|null]>=>{
-    const [customer, e] = await services.account.find.byId(payload.customerId);
+interface IOrderPaymentCache {
+    order: IOrderCache
+    items: Array<IOrderItemPayload>
+}
 
+interface IOrderCache {
+    customerId :string
+    shopId :string
+    address :string
+    toName :string
+    toPhone :string
+    toStreet :string
+    toWardCode :string
+    toDistrictId :number
+    serviceId :number
+    voucherId :string
+    productIds:Array<string>
+    totalPrice :number
+    productDiscount :number
+    status :string
+    voucherDiscount:number
+    deliveryFee:number
+    totalDiscount:number
+    total:number
+}
+
+const createPayment  = async (payload: IOrderCreatePayload):Promise<[IOrderCreatePayment|null,Error|null]>=>{
+    const orderId = util.random.randomeCode()
+
+    const productIds = payload.items.map((item) => item.product_id);
+    const [customer, e] = await services.account.find.byId(payload.customerId);
     if (e || !customer) {
-        return [null,Error("account not found")];
+        return [{url:null},Error("account not found")];
     }
 
     let [orderInfo, err] = await services.product.calculator.infoOrder(
@@ -22,34 +63,55 @@ const createPayment  = async (payload: IOrderCalculatePayload):Promise<[IOrderCr
     );
 
     if (err || !orderInfo) {
-        return [null,err];
+        return  [{url:null},err];
     }
 
     let [shop, _] = await services.account.find.byId(payload.shopId);
 
     if (!shop) {
-        return [null,Error("Invalid shop id")];
-    }
-    if (shop.id == customer.id) {
-        return [null,Error("Không thể mua hàng của chính bạn")];
+        return  [{url:null},Error("không tìm thấy shop")];
     }
 
-    let voucherDiscount =0;
+    if (shop.id == customer.id) {
+        return  [{url:null},Error("Không thể mua hàng của chính bạn")];
+    }
+
+    // create cache order
+    const order = {
+        customerId : payload.customerId,
+        shopId : payload.shopId,
+        address : payload.address,
+        toName : customer.name,
+        toPhone : customer.phone,
+        toStreet : customer.address,
+        toWardCode : customer.wardCode,
+        toDistrictId : customer.districtId,
+        serviceId : payload.serviceId,
+        voucherId : payload.voucherId,
+        productIds : productIds,
+        totalPrice : orderInfo.insurance_value,
+        productDiscount : orderInfo.discount,
+        status : constants.order.status.waitForConfirm,
+    } as IOrderCache;
+
+
     if (payload.voucherId) {
         const [voucher, _] = await services.voucher.find.validById(
             payload.voucherId
         );
         if (!voucher) {
-            return [null,Error("Voucher not found")];
+            return [{
+                url:null
+            } as IOrderCreatePayment,err];
         }
         if (voucher.discountPercent) {
-            voucherDiscount=
-                (orderInfo.insurance_value - orderInfo.discount) * voucher.discountPercent;
+            order.voucherDiscount =
+                (order.totalPrice - order.productDiscount) * voucher.discountPercent;
         } else {
-            voucherDiscount = voucher.discountValue;
+            order.voucherDiscount = voucher.discountValue;
         }
     }
-    let deliveryFee = 0;
+
     {
         const [feeData, err] = await delivery.shippingOrder.calculateFee(
             {
@@ -62,30 +124,37 @@ const createPayment  = async (payload: IOrderCalculatePayload):Promise<[IOrderCr
             orderInfo
         );
         if (err) {
-            return [null,err];
+            return [{
+                url:null
+            } as IOrderCreatePayment,err];
         }
 
-        deliveryFee = feeData?.total || 0;
+        order.deliveryFee = feeData?.total || 0;
     }
 
-    if (err) {
-        return err;
-    }
+    order.totalDiscount = order.voucherDiscount + order.productDiscount;
+    order.total = order.totalPrice + order.deliveryFee - order.totalDiscount;
 
-    let totalDiscount = voucherDiscount + orderInfo.discount;
-    let total = orderInfo.insurance_value + deliveryFee - totalDiscount;
 
 
     const rs = {
-        url:getPaymentURL(total,payload.header)
+        url:getPaymentURL(order.total,orderId)
     } as IOrderCreatePayment
+    // cache
+    const data = {
+        items:payload.items,
+        order:order
+    }as IOrderPaymentCache
+    const strData = JSON.stringify(data)
+    const key = redis.key.payment(orderId)
+    await redis.set.keyValueWithTTL(key,strData,3600)
 
     return [rs,null]
 }
 
-const getPaymentURL = (total:number,header:string|Array<string>):string=>{
+const getPaymentURL = (total:number,id:string):string=>{
     let vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    let returnUrl = "http://localhost:3000";
+    let returnUrl = "http://localhost:3000/order/payment-response";
 
     let date = new Date();
     let createDate = dateFormat(date, "yyyymmddHHmmss");
@@ -98,7 +167,7 @@ const getPaymentURL = (total:number,header:string|Array<string>):string=>{
     vnp_Params["vnp_Locale"] = "vn";
     vnp_Params["vnp_CurrCode"] = "VND";
     vnp_Params["vnp_TxnRef"] = orderId;
-    vnp_Params["vnp_OrderInfo"] = "Thanh toán hóa đơn shopbee";
+    vnp_Params["vnp_OrderInfo"] = id;
     vnp_Params["vnp_OrderType"] = "billpayment";
     vnp_Params["vnp_Amount"] = total * 100;
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
@@ -106,8 +175,11 @@ const getPaymentURL = (total:number,header:string|Array<string>):string=>{
     vnp_Params["vnp_CreateDate"] = createDate;
     vnp_Params = sortObject(vnp_Params);
 
+    let secretKey = process.env.VNPAY_SECRET_KEY || ""
+
+
     let signData = querystring.stringify(vnp_Params, { encode: false });
-    let hmac = crypto.createHmac("sha512", "HJIPHZCZAINQNMTCHBUXRHPUFYUATIJE");
+    let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
@@ -130,6 +202,92 @@ function sortObject(obj:any) {
     return sorted;
 }
 
+const receivePayment = async (p : IPaymentOnlinePayload):Promise<Error|null>=>{
+    let dataVnp :any = {
+        "vnp_Amount":p.vnp_Amount,
+        "vnp_BankCode":p.vnp_BankCode,
+        "vnp_BankTranNo":p.vnp_BankTranNo,
+        "vnp_CardType":p.vnp_CardType,
+        "vnp_OrderInfo":p.vnp_OrderInfo,
+        "vnp_PayDate":p.vnp_PayDate,
+        "vnp_ResponseCode":p.vnp_ResponseCode,
+        "vnp_TmnCode":p.vnp_TmnCode,
+        "vnp_TransactionNo":p.vnp_TransactionNo,
+        "vnp_TransactionStatus":p.vnp_TransactionStatus,
+        "vnp_TxnRef":p.vnp_TxnRef,
+    }
+
+    let secureHash = p.vnp_SecureHash;
+
+    let secretKey = process.env.VNPAY_SECRET_KEY || ""
+
+    dataVnp = sortObject(dataVnp)
+
+    let signData = querystring.stringify(dataVnp, { encode: false });
+    let hmac = crypto.createHmac("sha512", secretKey);
+    let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+    if (secureHash !== signed){
+        return Error("thanh toán thất bại")
+    }
+
+    // get data redis
+    if(!p.vnp_OrderInfo){
+        return Error("không tìm thấy đơn hàng")
+    }
+    const key = redis.key.payment(p.vnp_OrderInfo)
+    const dataStr =await redis.get.byKey(key)
+    if(!dataStr){
+        return Error("không tìm thấy đơn hàng")
+    }
+    const data = JSON.parse(dataStr) as IOrderPaymentCache
+
+    const order = convertToModelOrder(data.order)
+
+    const err = await transaction.order.create(order, data.items);
+
+    if (err) {
+        return err;
+    }
+
+    const [customer, _] = await services.account.find.byId(data.order.customerId);
+    if (!customer) {
+        return null;
+    }
+
+    if (customer.email) {
+        email.order.createOrder(customer.email, data.order.total);
+    }
+
+    return null
+}
+
+const convertToModelOrder = (payload : IOrderCache):Order=>{
+    const order = new Order()
+    order.customerId = payload.customerId;
+    order.shopId = payload.shopId;
+    order.address = payload.address;
+    order.toName = payload.toName;
+    order.toPhone = payload.toPhone;
+    order.toStreet = payload.address;
+    order.toWardCode = payload.toWardCode;
+    order.toDistrictId = payload.toDistrictId;
+    order.serviceId = payload.serviceId;
+    order.voucherId = payload.voucherId;
+    order.productIds = payload.productIds;
+    order.totalPrice = payload.totalPrice;
+    order.productDiscount = payload.productDiscount;
+    order.status = payload.status;
+    order.voucherDiscount= payload.voucherDiscount;
+    order.deliveryFee= payload.deliveryFee;
+    order.totalDiscount= payload.totalDiscount;
+    order.total= payload.total;
+    order.paymentMethod = constants.order.paymentMethod.online
+    order.paymentName = constants.order.paymentMethod.onlineName
+
+    return order
+}
+
 export default {
     createPayment,
+    receivePayment
 }
