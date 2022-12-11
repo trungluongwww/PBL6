@@ -112,6 +112,7 @@ const pageByUser = async (
   userType: string,
   shopId: string | null
 ): Promise<[Array<Order> | null, number, Error | null]> => {
+  console.log(limit,skip,status,currentUserId,userType,shopId)
   const db = database.getDataSource();
   try {
     const q = db.createQueryBuilder(Order, "o");
@@ -160,11 +161,10 @@ const pageByUser = async (
     if (status) {
       q.andWhere("o.status = :status", { status });
     }
-
     const count = await q.getCount();
 
     const rs = await q
-      .orderBy("o.updatedAt", "ASC")
+      .orderBy("o.updatedAt", "DESC")
       .skip(skip)
       .take(limit)
       .getMany();
@@ -196,7 +196,7 @@ const byShopIdAndTime = async (
       "o.createdAt",
     ]);
 
-    const rs = await q.orderBy("o.createdAt", "ASC").getMany();
+    const rs = await q.orderBy("o.createdAt", "DESC").getMany();
 
     return [rs, null];
   } catch (err: unknown) {

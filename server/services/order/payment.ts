@@ -248,7 +248,7 @@ const receivePayment = async (p : IPaymentOnlinePayload):Promise<Error|null>=>{
     if (err) {
         return err;
     }
-
+    await redis.del.byKey(key)
     const [customer, _] = await services.account.find.byId(data.order.customerId);
     if (!customer) {
         return null;
@@ -257,7 +257,6 @@ const receivePayment = async (p : IPaymentOnlinePayload):Promise<Error|null>=>{
     if (customer.email) {
         email.order.createOrder(customer.email, data.order.total);
     }
-
     return null
 }
 
