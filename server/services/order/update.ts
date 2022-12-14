@@ -37,13 +37,19 @@ const byCustomer = async (
     return Error("No permission");
   }
 
-  if (!strings.array.include(cstOrder.permissions.customer, payload.status))
-    return Error("Bad request");
-  if (checkUpdateStatusAllowed(order.status, payload.status))
-    return Error("Bad request");
+  if (!strings.array.include(cstOrder.permissions.customer, payload.status)) {
+    return Error("Customer không thể thực hiện hành động này");
+  }
+  if (!checkUpdateStatusAllowed(order.status, payload.status)) {
+    return Error("Thay đổi trạng thái không phù hợp");
+  }
 
   if (payload.status == cstOrder.status.cancelled) {
-    const err = await dao.order.update.status(order.id, payload.status);
+    const err = await dao.order.update.status(
+      order.id,
+      payload.status,
+      payload.reason
+    );
     if (err) return err;
   }
 
@@ -69,12 +75,16 @@ const bySeller = async (
   }
 
   if (!strings.array.include(cstOrder.permissions.seller, payload.status))
-    return Error("Bad request");
-  if (checkUpdateStatusAllowed(order.status, payload.status))
-    return Error("Bad request");
+    return Error("seller không thể thực hiện hành động này");
+  if (!checkUpdateStatusAllowed(order.status, payload.status))
+    return Error("trạng thái cập nhật không hợp lệ");
 
   {
-    const err = await dao.order.update.status(order.id, payload.status);
+    const err = await dao.order.update.status(
+      order.id,
+      payload.status,
+      payload.reason
+    );
     if (err) return err;
   }
 

@@ -6,7 +6,7 @@ let dataSource: DataSource;
 const connect = async (env: NodeJS.ProcessEnv) => {
   dataSource = new DataSource({
     type: "postgres",
-    host: env.URI,
+    host: env.POSTGRES_HOST,
     port: Number(env.POSTGRES_PORT),
     username: env.POSTGRES_USER_NAME,
     password: env.POSTGRES_USER_PASSWORD,
@@ -26,7 +26,7 @@ const connect = async (env: NodeJS.ProcessEnv) => {
   // Connect
   try {
     await dataSource.initialize();
-    console.log(`⚡️[postgres]: connected to ${env.URI}`);
+    console.log(`⚡️[postgres]: connected to ${env.POSTGRES_HOST}`);
 
     // Set timezone
     await dataSource.manager.query(`SET timezone = '+00:00';`);

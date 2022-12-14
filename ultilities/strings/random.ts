@@ -10,7 +10,7 @@ function makeid(length: number) {
 }
 
 const randomeCode = () => {
-  return Date.now() + makeid(10);
+  return Date.now().toString()
 };
 
 export default {

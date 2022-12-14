@@ -6,7 +6,7 @@ import validations from "./validations";
 
 export default (e: Router) => {
   const r = express.Router();
-  e.use("/vouchers", r);
+  e.use("/vouchers", required.login, r);
 
   r.post(
     "/",

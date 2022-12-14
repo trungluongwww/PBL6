@@ -12,18 +12,18 @@ async function init() {
   const port = process.env.PORT || 5000;
 
   app.listen(port, () => {
-    console.log("server listen on port: ", port);
+    console.log("⚡ server listen on port: ", port);
   });
 
-  const tunnel = await localtunnel({
-    port: 5000,
-    subdomain: "trungluong",
-  });
-
-  console.log(tunnel.url);
-  tunnel.on("close", () => {
-    console.log("close");
-  });
+  // const tunnel = await localtunnel({
+  //   port: 5000,
+  //   subdomain: "trungluong",
+  // });
+  //
+  // console.log(`⚡ domain: ${tunnel.url}`);
+  // tunnel.on("close", () => {
+  //   console.log("close");
+  // });
 }
 
 init().then();

@@ -5,13 +5,12 @@ import {
 import { Order } from "../../../modules/database/entities";
 import services from "../index";
 import constants from "../../../constants";
-import dao from "../../dao";
 import delivery from "../../../modules/delivery";
 import rabbitmq from "../../../modules/rabbitmq";
 import email from "../../../modules/email";
+import transaction from "../../transaction";
 
 export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
-  publicChangeProductQuantity(payload.items).then();
   const productIds = payload.items.map((item) => item.product_id);
   const [customer, e] = await services.account.find.byId(payload.customerId);
   if (e || !customer) {
@@ -33,21 +32,27 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
     return Error("Invalid shop id");
   }
 
+  if (shop.id == customer.id) {
+    return Error("Không thể mua hàng của chính bạn");
+  }
+
   const order = new Order();
   order.customerId = payload.customerId;
   order.shopId = payload.shopId;
   order.address = payload.address;
-  order.toName = payload.toName;
-  order.toPhone = payload.toPhone;
-  order.toStreet = payload.toStreet;
-  order.toWardCode = payload.toWardCode;
-  order.toDistrictId = payload.toDistrictId;
+  order.toName = customer.name;
+  order.toPhone = customer.phone;
+  order.toStreet = customer.address;
+  order.toWardCode = customer.wardCode;
+  order.toDistrictId = customer.districtId;
   order.serviceId = payload.serviceId;
   order.voucherId = payload.voucherId;
   order.productIds = productIds;
   order.totalPrice = orderInfo.insurance_value;
   order.productDiscount = orderInfo.discount;
   order.status = constants.order.status.waitForConfirm;
+  order.paymentMethod = constants.order.paymentMethod.cod;
+  order.paymentName = constants.order.paymentMethod.codName;
 
   if (payload.voucherId) {
     const [voucher, _] = await services.voucher.find.validById(
@@ -58,8 +63,7 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
     }
     if (voucher.discountPercent) {
       order.voucherDiscount =
-        ((order.totalPrice - order.productDiscount) * voucher.discountPercent) /
-        100;
+        (order.totalPrice - order.productDiscount) * voucher.discountPercent;
     } else {
       order.voucherDiscount = voucher.discountValue;
     }
@@ -70,8 +74,8 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
       {
         items: payload.items,
         service_id: payload.serviceId,
-        to_ward_code: payload.toWardCode,
-        to_district_id: payload.toDistrictId,
+        to_ward_code: customer.wardCode,
+        to_district_id: customer.districtId,
         from_district_id: shop.districtId,
       },
       orderInfo
@@ -83,25 +87,23 @@ export default async (payload: IOrderCreatePayload): Promise<Error | null> => {
     order.deliveryFee = feeData?.total || 0;
   }
 
-  err = await dao.order.create(order);
-  if (err) {
-    return err;
-  }
+  err = await transaction.order.create(order, payload.items);
 
-  err = await services.orderAndProduct.create.many(order.id, payload.items);
   if (err) {
-    dao.order.del.byAdmin(order.id).then();
-    services.orderAndProduct.del.manyByOrderId(order.id).then();
     return err;
   }
 
   if (customer.email) {
     email.order.createOrder(customer.email, order.total);
   }
-
+  publicChangeProductQuantity(payload.items).then();
   return null;
 };
 
 const publicChangeProductQuantity = async (items: Array<IOrderItemPayload>) => {
   rabbitmq.pub.Public(constants.rabbit.decreaseQuantityProductEvent, items);
 };
+
+export {
+  publicChangeProductQuantity,
+}

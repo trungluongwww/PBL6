@@ -10,7 +10,7 @@ const byId = async (payload: IReviewUpdatePayload): Promise<Error | null> => {
     return Error("Not found");
   }
   if (review.customerId != payload.currentUserId) {
-    return Error("No permission");
+    return Error("bạn không có quyền thực hiện hành động này ");
   }
 
   const err = await dao.review.update.byId(

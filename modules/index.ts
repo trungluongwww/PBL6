@@ -3,11 +3,14 @@ import { Express } from "express";
 import delivery from "./delivery";
 import rabbitmq from "./rabbitmq";
 import email from "./email";
+import sentry from "./sentry";
+import redis from "./redis";
 
 export default {
   initialize: async (e: Express) => {
     const cfg = process.env;
     await database.connect(cfg);
+
     // await redis.init(cfg);
     delivery.init(cfg);
 
@@ -16,5 +19,11 @@ export default {
 
     // rabbit
     rabbitmq.connect();
+
+    // redis
+    await redis.init(cfg)
+
+    sentry(e)
+
   },
 };

@@ -31,7 +31,6 @@ const calculateFee = async (
       return [null, err];
     }
   }
-  console.log(orderInfo);
 
   const GHNPayload = {
     from_district_id: payload.from_district_id,
@@ -44,7 +43,7 @@ const calculateFee = async (
     width: orderInfo?.width || 0,
     insurance_value: orderInfo?.insurance_value,
   } as IGHNFeePayload;
-  console.log({
+  console.log("asd",{
     ...GHNPayload,
     service_type_id: null,
     coupon: null,

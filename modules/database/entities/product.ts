@@ -49,7 +49,7 @@ export default class Product extends BaseEntity {
   length: number;
 
   @Column({
-    type: "decimal",
+    type: "float",
     name: "price",
     default: 0,
   })
@@ -58,7 +58,6 @@ export default class Product extends BaseEntity {
   @Column({
     name: "avatar",
     type: "varchar",
-    nullable: false,
   })
   avatar: string;
 
@@ -70,7 +69,7 @@ export default class Product extends BaseEntity {
   quantity: number;
 
   @Column({
-    type: "decimal",
+    type: "float",
     name: "discount",
     default: 0,
     nullable: true,

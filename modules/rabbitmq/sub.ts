@@ -2,8 +2,6 @@ import rabbitmq from "./index";
 import { IMessageRabbit, INewUser } from "../../interfaces/rabbit";
 import constants from "../../constants";
 import services from "../../server/services";
-import { flatMap } from "lodash";
-import { newCustomerEvent } from "../../constants/rabbit";
 import { admin } from "../../constants/permission";
 import { IProductCreate } from "../../interfaces/product";
 
@@ -44,6 +42,9 @@ const Subcrises = async () => {
                 case constants.rabbit.newShopEvent:
                   addUser(data, "shop").then();
                   break;
+                case constants.rabbit.newAdminEvent:
+                  addUser(data, "admin").then();
+                  break;
                 case (constants.rabbit.updateAccountEvent,
                 constants.rabbit.newCustomerEvent):
                   addUser(data, null).then();
@@ -66,7 +67,6 @@ const Subcrises = async () => {
 
 const addUser = async (msg: IMessageRabbit, role: string | null) => {
   const newUser = JSON.parse(msg.message) as INewUser;
-  console.log(newUser);
   await services.account.create.addUserFromRabbit(newUser, role);
 };
 

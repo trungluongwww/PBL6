@@ -10,7 +10,7 @@ const byId = async (payload: IVoucherDeletePayload) => {
   }
 
   if (payload.role != constants.account.role.admin) {
-    return Error("no permission");
+    return Error("bạn không có quyền ");
   }
 
   const err = await dao.voucher.del.byId(v.id);

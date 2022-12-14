@@ -1,5 +1,7 @@
 import { Request } from "express-jwt";
 import {
+  IOrderCalculatePayload,
+  IOrderCreatePayload,
   IOrderDetailQuery,
   IOrderQuerySearchByUser,
 } from "../../../interfaces/order";
@@ -9,11 +11,9 @@ import { Response } from "express";
 import { addAbortSignal } from "stream";
 
 const pageByUser = async (req: Request, res: Response) => {
-  console.log(req.auth);
   const query: IOrderQuerySearchByUser = req.query as never;
   query.currentUserId = req.auth?.id;
   query.userType = req.auth?.role;
-  console.log(query);
   const [rs, err] = await services.order.find.pageByClientId(query);
   if (err) {
     return response.r400(res, {}, err.message);
@@ -34,6 +34,7 @@ const byId = async (req: Request, res: Response) => {
   }
   return response.r200(res, rs);
 };
+
 
 export default {
   pageByUser,

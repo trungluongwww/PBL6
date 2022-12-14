@@ -19,10 +19,22 @@ export default class BaseEntity {
   createdAt: Date;
 
   @Column({
+    name: "created_at_number",
+    type: "bigint",
+  })
+  createdAtNumber: number;
+
+  @Column({
     name: "updated_at",
     type: "timestamp with time zone",
   })
   updatedAt: Date;
+
+  @Column({
+    name: "updated_at_number",
+    type: "bigint",
+  })
+  updatedAtNumber: number;
 
   @BeforeInsert()
   setId() {
@@ -31,9 +43,11 @@ export default class BaseEntity {
     }
     if (!this.createdAt) {
       this.createdAt = new Date();
+      this.createdAtNumber = Date.parse(this.createdAt.toString());
     }
     if (!this.updatedAt) {
       this.updatedAt = new Date();
+      this.updatedAtNumber = Date.parse(this.updatedAt.toString());
     }
   }
   @BeforeUpdate()

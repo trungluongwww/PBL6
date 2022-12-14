@@ -35,7 +35,6 @@ const many = async (
   orderId: string,
   orderItems: Array<IOrderItemPayload>
 ): Promise<Error | null> => {
-  console.log(orderItems);
   const oaps = orderItems.map((item) => {
     const order = new Order();
     order.id = orderId;

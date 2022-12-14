@@ -1,4 +1,4 @@
-import { Account, Order } from "../../../modules/database/entities";
+import { Order } from "../../../modules/database/entities";
 import database from "../../../modules/database";
 import constants from "../../../constants";
 import { IOrderDetailQuery } from "../../../interfaces/order";
@@ -7,17 +7,23 @@ const detailById = async (
   query: IOrderDetailQuery
 ): Promise<[Order | null, Error | null]> => {
   const db = database.getDataSource();
+
   try {
     const q = db.createQueryBuilder(Order, "o");
+
     q.leftJoinAndMapOne("o.customer", "accounts", "ac", "ac.id = o.customerId");
+
     q.leftJoinAndMapOne("o.shop", "accounts", "as", "as.id = o.shopId");
+
     q.leftJoinAndMapMany(
       "o.items",
       "order_and_products",
       "oap",
       "o.id = oap.orderId"
     );
+
     q.leftJoinAndMapOne("oap.product", "products", "p", "oap.productId = p.id");
+
     q.select([
       "o.createdAt",
       "o.updatedAt",
@@ -37,6 +43,7 @@ const detailById = async (
       "as.name",
       "as.phone",
       "as.email",
+      "as.avatar",
       "oap.id",
       "oap.quantity",
       "oap.product",
@@ -45,14 +52,18 @@ const detailById = async (
       "p.description",
       "p.price",
       "p.avatar",
+      "p.discount",
     ]);
     if (query.userType == constants.account.role.customer) {
       q.where("o.customerId = :id", { id: query.currentUserId });
     }
+
     if (query.userType == constants.account.role.shop) {
       q.where("o.shopId = :id", { id: query.currentUserId });
     }
+
     q.andWhere("o.id = :orderId", { orderId: query.orderId });
+
     const rs = await q.getOne();
 
     return [rs as Order, null];
@@ -98,8 +109,10 @@ const pageByUser = async (
   skip: number,
   status: string | null,
   currentUserId: string,
-  userType: string
-): Promise<[Array<Order> | null, Error | null]> => {
+  userType: string,
+  shopId: string | null
+): Promise<[Array<Order> | null, number, Error | null]> => {
+  console.log(limit,skip,status,currentUserId,userType,shopId)
   const db = database.getDataSource();
   try {
     const q = db.createQueryBuilder(Order, "o");
@@ -117,7 +130,9 @@ const pageByUser = async (
       "o.total",
       "o.createdAt",
       "o.updatedAt",
+      "o.reasonCancel",
       "as.id",
+      "as.avatar",
       "as.name",
       "oap.id",
       "oap.quantity",
@@ -139,18 +154,53 @@ const pageByUser = async (
       });
     }
 
+    if (shopId&&shopId!="") {
+      q.where("o.shopId = :shopId", { shopId: shopId });
+    }
+
     if (status) {
       q.andWhere("o.status = :status", { status });
     }
+    const count = await q.getCount();
+
     const rs = await q
       .orderBy("o.updatedAt", "DESC")
       .skip(skip)
       .take(limit)
       .getMany();
 
-    return [rs, null];
+    return [rs, count, null];
   } catch (err) {
     console.log("*** Error when load order page");
+    return [null, 1, err as Error];
+  }
+};
+
+const byShopIdAndTime = async (
+  shopId: string,
+  start: number,
+  end: number
+): Promise<[Array<Order> | null, Error | null]> => {
+  const db = database.getDataSource();
+  try {
+    const q = db.createQueryBuilder(Order, "o");
+    q.where("o.shopId = shopId", { shopId });
+    q.where("o.createdAtNumber BETWEEN :start AND :end", { start, end });
+    q.select([
+      "o.id",
+      "o.shopId",
+      "o.customerId",
+      "o.status",
+      "o.total",
+      "o.productIds",
+      "o.createdAt",
+    ]);
+
+    const rs = await q.orderBy("o.createdAt", "DESC").getMany();
+
+    return [rs, null];
+  } catch (err: unknown) {
+    console.log("***Error when find order by shop id", err);
     return [null, err as Error];
   }
 };
@@ -159,4 +209,5 @@ export default {
   detailById,
   pageByUser,
   byId,
+  byShopIdAndTime,
 };

@@ -16,11 +16,6 @@ const create = () => {
   return [
     body([
       "address",
-      "toName",
-      "toPhone",
-      "toStreet",
-      "toWardCode",
-      "toDistrictId",
       "serviceId",
       "voucherId",
     ])
@@ -30,11 +25,21 @@ const create = () => {
   ];
 };
 
+const calculate = () => {
+  return [
+    body([
+      "serviceId",
+      "voucherId",
+    ])
+        .notEmpty()
+        .withMessage("some fields is empty value"),
+    bodyId("shopId"),
+  ];
+};
+
 const updateStatus = () => {
   return [
-    body(["status", "orderId"])
-      .notEmpty()
-      .withMessage("some fields is empty value"),
+    body(["status"]).notEmpty().withMessage("some fields is empty value"),
     body("status")
       .isIn(constants.order.status.all)
       .withMessage("invalid status token"),
@@ -45,6 +50,7 @@ export default {
   search: [search(), checkErrors],
   getDetail: [paramId(), checkErrors],
   create: [create(), checkErrors],
+  calculate:[calculate(),checkErrors],
   updateStatus: [updateStatus(), paramId(), checkErrors],
   delete: [paramId(), checkErrors],
 };

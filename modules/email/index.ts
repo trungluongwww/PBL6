@@ -10,7 +10,7 @@ const init = () => {
       pass: process.env.GMAIL_PASSWORD,
     },
   });
-  console.log("[] gmail connected");
+  console.log("⚡ [Email] connected");
 };
 
 const getGmail = () => {

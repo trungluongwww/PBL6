@@ -42,6 +42,16 @@ const findByProduct = async (req: Request, res: Response) => {
   return response.r200(res, rs);
 };
 
+const findByOrderId = async (req: Request, res: Response) => {
+  const orderId = req.params.id as string;
+
+  const [rs, err] = await services.review.find.byOrderId(orderId);
+  if (err) {
+    return response.r400(res, {}, err.message);
+  }
+  return response.r200(res, rs);
+};
+
 const updateById = async (req: Request, res: Response) => {
   const payload = req.body as IReviewUpdatePayload;
   payload.reviewId = req.params.id;
@@ -75,4 +85,5 @@ export default {
   create,
   updateById,
   removeById,
+  findByOrderId,
 };
