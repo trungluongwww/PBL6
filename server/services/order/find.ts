@@ -17,10 +17,11 @@ const pageByClientId = async (
 
   let shopId = "";
   if (query.shopId && query.shopId != "") {
-    const [account, err] = await services.account.find.byId(query.shopId);
+    const [account, err] = await services.account.find.byId(query.currentUserId);
     if (err || !account) {
       return [null, Error("shop không tồn tại")];
     }
+
     if (account.role != constants.account.role.admin) {
       return [null, Error("account không phải admin")];
     }

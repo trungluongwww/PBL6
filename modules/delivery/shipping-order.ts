@@ -7,7 +7,6 @@ import {
   IGHNServiceData,
   IGHNPreviewFeeResponse,
 } from "../../interfaces/delivery";
-import {} from "../../interfaces/delivery/response";
 import fetch from "node-fetch";
 import delivery from "./index";
 import constants from "../../constants";
@@ -43,11 +42,6 @@ const calculateFee = async (
     width: orderInfo?.width || 0,
     insurance_value: orderInfo?.insurance_value,
   } as IGHNFeePayload;
-  console.log("asd",{
-    ...GHNPayload,
-    service_type_id: null,
-    coupon: null,
-  });
 
   if (
     GHNPayload.weight < 1 ||

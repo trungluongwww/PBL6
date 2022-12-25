@@ -140,6 +140,7 @@ const createPayment  = async (payload: IOrderCreatePayload):Promise<[IOrderCreat
     const rs = {
         url:getPaymentURL(order.total,orderId)
     } as IOrderCreatePayment
+
     // cache
     const data = {
         items:payload.items,
@@ -266,7 +267,7 @@ const convertToModelOrder = (payload : IOrderCache):Order=>{
     order.shopId = payload.shopId;
     order.address = payload.address;
     order.toName = payload.toName;
-    order.toPhone = payload.toPhone;
+    order.toPhone = payload.toPhone || "";
     order.toStreet = payload.address;
     order.toWardCode = payload.toWardCode;
     order.toDistrictId = payload.toDistrictId;

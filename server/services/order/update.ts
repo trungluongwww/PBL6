@@ -44,7 +44,7 @@ const byCustomer = async (
     return Error("Thay đổi trạng thái không phù hợp");
   }
 
-  if (payload.status == cstOrder.status.cancelled) {
+  if (payload.status == cstOrder.status.cancelled || payload.status == cstOrder.status.completed) {
     const err = await dao.order.update.status(
       order.id,
       payload.status,
